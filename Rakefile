@@ -12,10 +12,10 @@ begin
     #gemspec.homepage = "http://fluent.github.com/"
     gemspec.has_rdoc = false
     gemspec.require_paths = ["lib"]
-    gemspec.add_dependency "fluent", "~> 0.9.6"
+    gemspec.add_dependency "fluent", "~> 0.9.7"
     gemspec.test_files = Dir["test/**/*.rb"]
     gemspec.files = Dir["bin/**/*", "lib/**/*", "test/**/*.rb"] +
-      %w[example.conf]
+      %w[example.conf VERSION AUTHORS Rakefile fluent-plugin-td.gemspec]
     gemspec.executables = []
   end
   Jeweler::GemcutterTasks.new
