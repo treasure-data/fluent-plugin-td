@@ -20,6 +20,8 @@ class TreasureDataLogOutput < BufferedOutput
     @tmpdir = '/tmp/fluent/tdlog'
     @apikey = nil
     @key = nil
+    @key_num_limit = 5120  # TODO
+    @record_size_limit = 32*1024*1024  # TODO
     @table_list = []
   end
 
@@ -90,10 +92,23 @@ class TreasureDataLogOutput < BufferedOutput
 
   def format_stream(tag, es)
     out = ''
+    off = out.bytesize
     es.each {|event|
       record = event.record
       record['time'] = event.time
+
+      if record.size > @key_num_limit
+        raise "Too many number of keys (#{record.size} keys)"  # TODO include summary of the record
+      end
+
       record.to_msgpack(out)
+
+      noff = out.bytesize
+      sz = noff - off
+      if sz > @record_size_limit
+        raise "Size of a record too large (#{sz} bytes)"  # TODO include summary of the record
+      end
+      off = noff
     }
     out
   end
