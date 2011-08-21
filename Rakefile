@@ -13,6 +13,7 @@ begin
     gemspec.has_rdoc = false
     gemspec.require_paths = ["lib"]
     gemspec.add_dependency "fluent", "~> 0.9.7"
+    gemspec.add_dependency "td-client", "~> 0.8.0"
     gemspec.test_files = Dir["test/**/*.rb"]
     gemspec.files = Dir["bin/**/*", "lib/**/*", "test/**/*.rb"] +
       %w[example.conf VERSION AUTHORS Rakefile fluent-plugin-td.gemspec]
