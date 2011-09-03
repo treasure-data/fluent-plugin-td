@@ -1,0 +1,6 @@
+
+Release 0.9.8 - 2011/09/03
+
+  * supports auto_create_table option
+  * uses td-client gem
+
