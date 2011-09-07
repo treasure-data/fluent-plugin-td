@@ -1,4 +1,9 @@
 
+Release 0.9.9 - 2011/09/07
+
+  * Upload logs every 5mins instead of 1min
+
+
 Release 0.9.8 - 2011/09/03
 
   * supports auto_create_table option
