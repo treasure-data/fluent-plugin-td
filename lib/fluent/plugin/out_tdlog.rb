@@ -25,6 +25,7 @@ class TreasureDataLogOutput < BufferedOutput
     @record_size_limit = 32*1024*1024  # TODO
     @table_list = []
     @auto_create_table = false
+    @flush_interval = 300  # overwrite default flush_interval from 1min to 5mins
   end
 
   def configure(conf)
