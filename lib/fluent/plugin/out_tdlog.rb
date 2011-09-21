@@ -24,7 +24,7 @@ class TreasureDataLogOutput < BufferedOutput
     @key_num_limit = 5120  # TODO
     @record_size_limit = 32*1024*1024  # TODO
     @table_list = []
-    @auto_create_table = false
+    @auto_create_table = true
     @flush_interval = 300  # overwrite default flush_interval from 1min to 5mins
   end
 
@@ -39,9 +39,24 @@ class TreasureDataLogOutput < BufferedOutput
       raise ConfigError, "'apikey' parameter is required on tdlog output"
     end
 
-    database = conf['database']
-    table = conf['table']
-    if database && table
+    if auto_create_table = conf['auto_create_table']
+      if auto_create_table.empty?
+        @auto_create_table = true
+      else
+        @auto_create_table = Config.bool_value(auto_create_table)
+        if @auto_create_table == nil
+          raise ConfigError, "'true' or 'false' is required for auto_create_table option on tdlog output"
+        end
+      end
+    end
+
+    unless @auto_create_table
+      database = conf['database']
+      table = conf['table']
+
+      if !database || !table
+        raise ConfigError, "'database' and 'table' parameter are required on tdlog output"
+      end
       if !validate_name(database)
         raise ConfigError, "Invalid database name #{database.inspect}: #{conf}"
       end
@@ -49,12 +64,6 @@ class TreasureDataLogOutput < BufferedOutput
         raise ConfigError, "Invalid table name #{table.inspect}: #{conf}"
       end
       @key = "#{database}.#{table}"
-    elsif (database && !table) || (!database && table)
-      raise ConfigError, "'database' and 'table' parameter are required on tdlog output"
-    end
-
-    if conf['auto_create_table']
-      @auto_create_table = true
     end
   end
 
