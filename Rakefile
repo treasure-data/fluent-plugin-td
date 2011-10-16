@@ -47,5 +47,12 @@ end
 #
 #task :default => [VERSION_FILE, :build]
 
-task :default => [:build]
+Rake::TestTask.new(:test) do |t|
+  t.libs << "test"
+  t.test_files = Dir["test/*.rb"].sort
+  t.verbose = true
+  #t.warning = true
+end
+
+task :default => [:build, :gemspec]
 

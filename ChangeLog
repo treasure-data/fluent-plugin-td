@@ -1,4 +1,10 @@
 
+Release 0.10.0 - 2011/10/16
+
+  * Use buf_file by default
+  * Updated to fluentd-0.10.0
+
+
 Release 0.9.10 - 2011/09/21
 
   * Enabled auto_create_table by default
