@@ -4,9 +4,18 @@ module Fluent
 class TreasureDataLogOutput < BufferedOutput
   Plugin.register_output('tdlog', self)
 
-  HOST = ENV['TD_API_SERVER'] || 'api.treasure-data.com'
-  PORT = 80
+  host = 'api.treasure-data.com'
+  port = 80
+  if e = ENV['TD_API_SERVER']
+    host, port_ = e.split(':',2)
+    port_ = port_.to_i
+    port = port_ if port_ != 0
+  end
+
+  HOST = host
+  PORT = port
   USE_SSL = false
+  BASE_URL = ''
 
   def initialize
     require 'fileutils'
@@ -25,7 +34,8 @@ class TreasureDataLogOutput < BufferedOutput
     @record_size_limit = 32*1024*1024  # TODO
     @table_list = []
     @auto_create_table = true
-    @flush_interval = 300  # overwrite default flush_interval from 1min to 5mins
+    @buffer_type = 'file'  # overwrite default buffer_type
+    @flush_interval = 300  # overwrite default flush_interval to 5mins
   end
 
   def configure(conf)
@@ -101,9 +111,8 @@ class TreasureDataLogOutput < BufferedOutput
   def format_stream(tag, es)
     out = ''
     off = out.bytesize
-    es.each {|event|
-      record = event.record
-      record['time'] = event.time
+    es.each {|time,record|
+      record['time'] = time
 
       if record.size > @key_num_limit
         raise "Too many number of keys (#{record.size} keys)"  # TODO include summary of the record
