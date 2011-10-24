@@ -1,58 +1,14 @@
-require 'rake'
+
+require 'bundler'
+Bundler::GemHelper.install_tasks
+
 require 'rake/testtask'
-require 'rake/clean'
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "fluent-plugin-td"
-    gemspec.summary = "Treasure Data plugin for Fluent event collector"
-    gemspec.author = "Sadayuki Furuhashi"
-    #gemspec.email = "frsyuki@gmail.com"
-    #gemspec.homepage = "http://fluent.github.com/"
-    gemspec.has_rdoc = false
-    gemspec.require_paths = ["lib"]
-    gemspec.add_dependency "fluentd", "~> 0.10.0"
-    gemspec.add_dependency "td-client", "~> 0.8.0"
-    gemspec.test_files = Dir["test/**/*.rb"]
-    gemspec.files = Dir["bin/**/*", "lib/**/*", "test/**/*.rb"] +
-      %w[example.conf VERSION AUTHORS Rakefile fluent-plugin-td.gemspec]
-    gemspec.executables = []
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler not available. Install it with: gem install jeweler"
+Rake::TestTask.new(:test) do |test|
+  test.libs << 'lib' << 'test'
+  test.test_files = FileList['test/*.rb']
+  test.verbose = true
 end
 
-Rake::TestTask.new(:test) do |t|
-  t.test_files = Dir['test/*_test.rb']
-  t.ruby_opts = ['-rubygems'] if defined? Gem
-  t.ruby_opts << '-I.'
-end
-
-#VERSION_FILE = "lib/fluent/version.rb"
-#
-#file VERSION_FILE => ["VERSION"] do |t|
-#  version = File.read("VERSION").strip
-#  File.open(VERSION_FILE, "w") {|f|
-#    f.write <<EOF
-#module Fluent
-#
-#VERSION = '#{version}'
-#
-#end
-#EOF
-#  }
-#end
-#
-#task :default => [VERSION_FILE, :build]
-
-Rake::TestTask.new(:test) do |t|
-  t.libs << "test"
-  t.test_files = Dir["test/*.rb"].sort
-  t.verbose = true
-  #t.warning = true
-end
-
-task :default => [:build, :gemspec]
+task :default => [:build]
 
