@@ -67,11 +67,15 @@ class TreasureDataLogOutput < BufferedOutput
       if !database || !table
         raise ConfigError, "'database' and 'table' parameter are required on tdlog output"
       end
-      if !validate_name(database)
-        raise ConfigError, "Invalid database name #{database.inspect}: #{conf}"
+      begin
+        TreasureData::API.validate_database_name(database)
+      rescue
+        raise ConfigError, "Invalid database name #{database.inspect}: #{$!}: #{conf}"
       end
-      if !validate_name(table)
-        raise ConfigError, "Invalid table name #{table.inspect}: #{conf}"
+      begin
+        TreasureData::API.validate_table_name(table)
+      rescue
+        raise ConfigError, "Invalid table name #{table.inspect}: #{$!}: #{conf}"
       end
       @key = "#{database}.#{table}"
     end
@@ -90,10 +94,8 @@ class TreasureDataLogOutput < BufferedOutput
       key = @key
     else
       database, table = tag.split('.')[-2,2]
-      if !validate_name(database) || !validate_name(table)
-        $log.debug { "Invalid tag #{tag.inspect}" }
-        return
-      end
+      TreasureData::API.validate_database_name(database)
+      TreasureData::API.validate_table_name(table)
       key = "#{database}.#{table}"
     end
 
@@ -102,10 +104,6 @@ class TreasureDataLogOutput < BufferedOutput
     end
 
     super(tag, es, chain, key)
-  end
-
-  def validate_name(name)
-    true
   end
 
   def format_stream(tag, es)
@@ -132,10 +130,6 @@ class TreasureDataLogOutput < BufferedOutput
 
   def write(chunk)
     database, table = chunk.key.split('.',2)
-    if !validate_name(database) || !validate_name(table)
-      $log.error "Invalid key name #{chunk.key.inspect}"
-      return
-    end
 
     f = Tempfile.new("tdlog-", @tmpdir)
     w = Zlib::GzipWriter.new(f)
