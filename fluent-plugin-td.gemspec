@@ -17,5 +17,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_dependency "fluentd", "~> 0.10.0"
-  gem.add_dependency "td-client", "~> 0.8.0"
+  gem.add_dependency "td-client", "~> 0.8.4"
 end

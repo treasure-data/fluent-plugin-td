@@ -1,4 +1,10 @@
 
+Release 0.10.1 - 2011/11/11
+
+  * Validate database name and table name on emit
+  * Include more information on error message
+
+
 Release 0.10.0 - 2011/10/16
 
   * Use buf_file by default
