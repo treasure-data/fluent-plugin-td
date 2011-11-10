@@ -151,20 +151,28 @@ class TreasureDataLogOutput < BufferedOutput
     $log.trace { "uploading logs to Treasure Data database=#{database} table=#{table} (#{size}bytes)" }
 
     begin
-      @client.import(database, table, "msgpack.gz", io, size)
-    rescue TreasureData::NotFoundError
-      unless @auto_create_table
-        raise $!
-      end
-      $log.info "Creating table #{database}.#{table} on TreasureData"
       begin
-        @client.create_log_table(database, table)
+        start = Time.now
+        @client.import(database, table, "msgpack.gz", io, size)
       rescue TreasureData::NotFoundError
-        @client.create_database(database)
-        @client.create_log_table(database, table)
+        unless @auto_create_table
+          raise $!
+        end
+        $log.info "Creating table #{database}.#{table} on TreasureData"
+        begin
+          @client.create_log_table(database, table)
+        rescue TreasureData::NotFoundError
+          @client.create_database(database)
+          @client.create_log_table(database, table)
+        end
+        io.pos = 0
+        retry
       end
-      io.pos = 0
-      retry
+    rescue => e
+      elapsed = Time.now - start
+      ne = RuntimeError.new("Failed to upload to TreasureData: #{$!} (#{size} bytes; #{elapsed} seconds)")
+      ne.set_backtrace(e.backtrace)
+      raise ne
     end
   end
 
