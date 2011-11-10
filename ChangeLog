@@ -1,4 +1,9 @@
 
+Release 0.10.2 - 2011/11/11
+
+  * Limit buffer_chunk_limit upto 32MB
+
+
 Release 0.10.1 - 2011/11/11
 
   * Validate database name and table name on emit
