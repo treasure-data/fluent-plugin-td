@@ -16,6 +16,7 @@ class TreasureDataLogOutput < BufferedOutput
   PORT = port
   USE_SSL = false
   BASE_URL = ''
+  IMPORT_SIZE_LIMIT = 32*1024*1024
 
   def initialize
     require 'fileutils'
@@ -40,6 +41,15 @@ class TreasureDataLogOutput < BufferedOutput
 
   def configure(conf)
     super
+
+    # force overwrite buffer_chunk_limit
+    if @buffer.respond_to?(:buffer_chunk_limit=) && @buffer.respond_to?(:buffer_queue_limit=)
+      if @buffer.buffer_chunk_limit > IMPORT_SIZE_LIMIT
+        ex = @buffer.buffer_chunk_limit / IMPORT_SIZE_LIMIT
+        @buffer.buffer_chunk_limit = IMPORT_SIZE_LIMIT
+        @buffer.buffer_queue_limit *= ex if ex > 0
+      end
+    end
 
     @tmpdir = conf['tmpdir'] || @tmpdir
     FileUtils.mkdir_p(@tmpdir)
