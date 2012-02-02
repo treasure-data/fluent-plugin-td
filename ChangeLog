@@ -1,4 +1,9 @@
 
+Release 0.10.3 - 2012/02/02
+
+  * Support use_ssl parameter
+
+
 Release 0.10.2 - 2011/11/11
 
   * Limit buffer_chunk_limit upto 32MB
