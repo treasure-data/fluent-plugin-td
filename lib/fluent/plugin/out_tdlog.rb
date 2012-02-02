@@ -4,18 +4,6 @@ module Fluent
 class TreasureDataLogOutput < BufferedOutput
   Plugin.register_output('tdlog', self)
 
-  host = 'api.treasure-data.com'
-  port = 80
-  if e = ENV['TD_API_SERVER']
-    host, port_ = e.split(':',2)
-    port_ = port_.to_i
-    port = port_ if port_ != 0
-  end
-
-  HOST = host
-  PORT = port
-  USE_SSL = false
-  BASE_URL = ''
   IMPORT_SIZE_LIMIT = 32*1024*1024
 
   def initialize
@@ -70,6 +58,17 @@ class TreasureDataLogOutput < BufferedOutput
       end
     end
 
+    if use_ssl = conf['use_ssl']
+      if use_ssl.empty?
+        @use_ssl = true
+      else
+        @use_ssl = Config.bool_value(use_ssl)
+        if @use_ssl == nil
+          raise ConfigError, "'true' or 'false' is required for use_ssl option on tdlog output"
+        end
+      end
+    end
+
     unless @auto_create_table
       database = conf['database']
       table = conf['table']
@@ -93,7 +92,7 @@ class TreasureDataLogOutput < BufferedOutput
 
   def start
     super
-    @client = TreasureData::Client.new(@apikey)
+    @client = TreasureData::Client.new(@apikey, :ssl=>@use_ssl)
     unless @auto_create_table
       check_table_exists(@key)
     end
