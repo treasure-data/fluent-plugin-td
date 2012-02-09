@@ -124,14 +124,14 @@ class TreasureDataLogOutput < BufferedOutput
         record['time'] = time
 
         if record.size > @key_num_limit
-          raise "Too many number of keys (#{record.size} keys): #{summarize_record(record)}"  # TODO include summary of the record
+          raise "Too many number of keys (#{record.size} keys)"  # TODO include summary of the record
         end
 
       rescue
         # TODO (a) Remove the transaction mechanism of fluentd
         #      or (b) keep transaction boundaries in in/out_forward.
         #      This code disables the transaction mechanism (a).
-        $log.error $!.to_s
+        $log.error "#{$!}: #{summarize_record(record)}"
         $log.error_backtrace $!.backtrace
         next
       end
@@ -143,7 +143,7 @@ class TreasureDataLogOutput < BufferedOutput
       if sz > @record_size_limit
         # TODO don't raise error
         #raise "Size of a record too large (#{sz} bytes)"  # TODO include summary of the record
-        $log.error "Size of a record too large (#{sz} bytes): #{summarize_record(record)}"
+        $log.warn "Size of a record too large (#{sz} bytes): #{summarize_record(record)}"
       end
       off = noff
     }
