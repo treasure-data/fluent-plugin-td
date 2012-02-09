@@ -120,10 +120,20 @@ class TreasureDataLogOutput < BufferedOutput
     out = ''
     off = out.bytesize
     es.each {|time,record|
-      record['time'] = time
+      begin
+        record['time'] = time
 
-      if record.size > @key_num_limit
-        raise "Too many number of keys (#{record.size} keys)"  # TODO include summary of the record
+        if record.size > @key_num_limit
+          raise "Too many number of keys (#{record.size} keys): #{summarize_record(record)}"  # TODO include summary of the record
+        end
+
+      rescue
+        # TODO (a) Remove the transaction mechanism of fluentd
+        #      or (b) keep transaction boundaries in in/out_forward.
+        #      This code disables the transaction mechanism (a).
+        $log.error $!.to_s
+        $log.error_backtrace $!.backtrace
+        next
       end
 
       record.to_msgpack(out)
@@ -131,11 +141,22 @@ class TreasureDataLogOutput < BufferedOutput
       noff = out.bytesize
       sz = noff - off
       if sz > @record_size_limit
-        raise "Size of a record too large (#{sz} bytes)"  # TODO include summary of the record
+        # TODO don't raise error
+        #raise "Size of a record too large (#{sz} bytes)"  # TODO include summary of the record
+        $log.error "Size of a record too large (#{sz} bytes): #{summarize_record(record)}"
       end
       off = noff
     }
     out
+  end
+
+  def summarize_record(record)
+    json = record.to_json
+    if json.size > 100
+      json[0..97]+"..."
+    else
+      json
+    end
   end
 
   def write(chunk)
