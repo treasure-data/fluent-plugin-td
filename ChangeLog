@@ -1,4 +1,10 @@
 
+Release 0.10.4 - 2012/02/09
+
+  * Disable Fluentd's transaction mechanism
+  * Include summary of invalid records in error messages
+
+
 Release 0.10.3 - 2012/02/02
 
   * Support use_ssl parameter
