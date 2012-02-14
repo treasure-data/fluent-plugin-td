@@ -78,12 +78,12 @@ class TreasureDataLogOutput < BufferedOutput
         raise ConfigError, "'database' and 'table' parameter are required on tdlog output"
       end
       begin
-        TreasureData::API.validate_database_name(database)
+        TreasureData::API.normalize_database_name(database)
       rescue
         raise ConfigError, "Invalid database name #{database.inspect}: #{$!}: #{conf}"
       end
       begin
-        TreasureData::API.validate_table_name(table)
+        TreasureData::API.normalize_table_name(table)
       rescue
         raise ConfigError, "Invalid table name #{table.inspect}: #{$!}: #{conf}"
       end
@@ -104,8 +104,8 @@ class TreasureDataLogOutput < BufferedOutput
       key = @key
     else
       database, table = tag.split('.')[-2,2]
-      TreasureData::API.validate_database_name(database)
-      TreasureData::API.validate_table_name(table)
+      TreasureData::API.normalize_database_name(database)
+      TreasureData::API.normalize_table_name(table)
       key = "#{database}.#{table}"
     end
 
