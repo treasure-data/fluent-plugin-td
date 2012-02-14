@@ -1,4 +1,9 @@
 
+Release 0.10.5 - 2012/02/13
+
+  * Normalize invalid database/table names instead of raising errors
+
+
 Release 0.10.4 - 2012/02/09
 
   * Disable Fluentd's transaction mechanism
