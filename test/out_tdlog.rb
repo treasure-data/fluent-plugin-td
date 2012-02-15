@@ -52,15 +52,16 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
 #    end
 #  end
 
-  def test_invalid_data
-    d = create_driver
-    d.instance.start
-
-    es = Fluent::OneEventStream.new(Time.now.to_i, "invalid")
-    chain = Fluent::NullOutputChain.instance
-    assert_nothing_raised do
-      d.instance.emit("test.name", es, chain)
-    end
-  end
+## TODO invalid data is ignored
+#  def test_invalid_data
+#    d = create_driver
+#    d.instance.start
+#
+#    es = Fluent::OneEventStream.new(Time.now.to_i, "invalid")
+#    chain = Fluent::NullOutputChain.instance
+#    assert_nothing_raised do
+#      d.instance.emit("test.name", es, chain)
+#    end
+#  end
 end
 
