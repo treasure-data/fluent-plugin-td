@@ -34,22 +34,23 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     d.run
   end
 
-  def test_invalid_name
-    d = create_driver
-    d.instance.start
-
-    es = Fluent::OneEventStream.new(Time.now.to_i, {})
-    chain = Fluent::NullOutputChain.instance
-    assert_raise(RuntimeError) do
-      d.instance.emit("test.invalid-name", es, chain)
-    end
-    assert_raise(RuntimeError) do
-      d.instance.emit("empty", es, chain)
-    end
-    assert_raise(RuntimeError) do
-      d.instance.emit("", es, chain)
-    end
-  end
+## TODO invalid names are normalized
+#  def test_invalid_name
+#    d = create_driver
+#    d.instance.start
+#
+#    es = Fluent::OneEventStream.new(Time.now.to_i, {})
+#    chain = Fluent::NullOutputChain.instance
+#    assert_raise(RuntimeError) do
+#      d.instance.emit("test.invalid-name", es, chain)
+#    end
+#    assert_raise(RuntimeError) do
+#      d.instance.emit("empty", es, chain)
+#    end
+#    assert_raise(RuntimeError) do
+#      d.instance.emit("", es, chain)
+#    end
+#  end
 
   def test_invalid_data
     d = create_driver
