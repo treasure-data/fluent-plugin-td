@@ -1,4 +1,9 @@
 
+Release 0.10.6 - 2012/03/01
+
+  * Updated td-client to v0.8.11
+
+
 Release 0.10.5 - 2012/02/13
 
   * Normalize invalid database/table names instead of raising errors
