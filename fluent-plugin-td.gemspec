@@ -3,12 +3,12 @@ $:.push File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name        = "fluent-plugin-td"
-  gem.description = "Treasure Data output plugin for Fluent event collector"
-  #gem.homepage    = "http://fluentd.org/"
+  gem.description = "Treasure Data Cloud Data Warehousing plugin for Fluentd"
+  gem.homepage    = "http://treasure-data.com/"
   gem.summary     = gem.description
   gem.version     = File.read("VERSION").strip
-  gem.authors     = ["Sadayuki Furuhashi"]
-  #gem.email       = "frsyuki@gmail.com"
+  gem.authors     = ["Treasure Data, Inc."]
+  gem.email       = "support@treasure-data.com"
   gem.has_rdoc    = false
   #gem.platform    = Gem::Platform::RUBY
   gem.files       = `git ls-files`.split("\n")
