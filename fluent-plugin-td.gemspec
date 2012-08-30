@@ -17,6 +17,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_dependency "fluentd", "~> 0.10.6"
-  gem.add_dependency "td", "~> 0.10.17"
+  gem.add_dependency "td", "~> 0.10.41"
   gem.add_development_dependency "rake", ">= 0.9.2"
 end
