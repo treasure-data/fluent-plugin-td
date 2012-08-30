@@ -1,4 +1,9 @@
 
+Release 0.10.9 - 2012/08/30
+
+  * Supports http_proxy parameter
+
+
 Release 0.10.7 - 2012/06/07
 
   * Depends on td instead of td-client to install td command
