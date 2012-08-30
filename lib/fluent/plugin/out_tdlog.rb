@@ -89,11 +89,13 @@ class TreasureDataLogOutput < BufferedOutput
       end
       @key = "#{database}.#{table}"
     end
+
+    @http_proxy = conf['http_proxy']
   end
 
   def start
     super
-    @client = TreasureData::Client.new(@apikey, :ssl=>@use_ssl)
+    @client = TreasureData::Client.new(@apikey, :ssl=>@use_ssl, :http_proxy=>@http_proxy)
     unless @auto_create_table
       check_table_exists(@key)
     end
