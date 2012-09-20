@@ -6,6 +6,58 @@ class TreasureDataLogOutput < BufferedOutput
 
   IMPORT_SIZE_LIMIT = 32*1024*1024
 
+  class Scrambler
+    include Configurable
+  end
+
+  class RawScrambler < Scrambler
+    def scramble(obj)
+      if obj == nil
+        nil
+      elsif obj.is_a?(String)
+        scramble_raw obj
+      elsif obj.is_a?(Numeric)
+        scramble_raw obj.to_s
+      else
+        # boolean, array, map
+        scramble_raw MessagePack.pack(obj)
+      end
+    end
+  end
+
+  class MD5Scrambler < RawScrambler
+    def scramble_raw(raw)
+      Digest::MD5.hexdigest(raw)
+    end
+  end
+
+  class IPXORScrambler < RawScrambler
+    config_param :xor_key, :string
+
+    def configure(conf)
+      super
+
+      a1, a2, a3, a4 = @xor_key.split('.')
+      @xor_keys = [a1.to_i, a2.to_i, a3.to_i, a4.to_i]
+
+      if @xor_keys == [0, 0, 0, 0]
+        raise ConfigError, "'xor_key' must be IPv4 address"
+      end
+    end
+
+    def scramble_raw(raw)
+      a1, a2, a3, a4 = raw.split('.')
+      k1, k2, k3, k4 = @xor_keys
+
+      o1 = a1.to_i ^ k1
+      o2 = a2.to_i ^ k2
+      o3 = a3.to_i ^ k3
+      o4 = a4.to_i ^ k4
+
+      "#{o1}.#{o2}.#{o3}.#{o4}"
+    end
+  end
+
   def initialize
     require 'fileutils'
     require 'tempfile'
@@ -15,6 +67,7 @@ class TreasureDataLogOutput < BufferedOutput
     require 'cgi' # CGI.escape
     require 'time' # Time#rfc2822
     require 'td-client'
+    require 'digest/md5'
     super
     @tmpdir = '/tmp/fluent/tdlog'
     @apikey = nil
@@ -90,6 +143,28 @@ class TreasureDataLogOutput < BufferedOutput
       @key = "#{database}.#{table}"
     end
 
+    @scramblers = {}
+    conf.elements.select {|e|
+      e.name == 'scramble'
+    }.each {|e|
+      key = e['key']
+      method = e['method']
+
+      case method
+      when 'md5'
+        scr = MD5Scrambler.new
+      when 'ip_xor'
+        scr = IPXORScrambler.new
+      else
+        raise ConfigError, "Unknown scramble method: #{method}"
+      end
+
+      scr.configure(e)
+
+      @scramblers[key] = scr
+    }
+    @scramblers = nil if @scramblers.empty?
+
     @http_proxy = conf['http_proxy']
   end
 
@@ -123,6 +198,14 @@ class TreasureDataLogOutput < BufferedOutput
     off = out.bytesize
     es.each {|time,record|
       begin
+        if @scramblers
+          @scramblers.each_pair {|key,scr|
+            if value = record[key]
+              record[key] = scr.scramble(value)
+            end
+          }
+        end
+
         record['time'] = time
 
         if record.size > @key_num_limit
