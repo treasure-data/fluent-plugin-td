@@ -6,32 +6,32 @@ class TreasureDataLogOutput < BufferedOutput
 
   IMPORT_SIZE_LIMIT = 32*1024*1024
 
-  class Scrambler
+  class Anonymize
     include Configurable
   end
 
-  class RawScrambler < Scrambler
-    def scramble(obj)
+  class RawAnonymize < Anonymize
+    def anonymize(obj)
       if obj == nil
         nil
       elsif obj.is_a?(String)
-        scramble_raw obj
+        anonymize_raw obj
       elsif obj.is_a?(Numeric)
-        scramble_raw obj.to_s
+        anonymize_raw obj.to_s
       else
         # boolean, array, map
-        scramble_raw MessagePack.pack(obj)
+        anonymize_raw MessagePack.pack(obj)
       end
     end
   end
 
-  class MD5Scrambler < RawScrambler
-    def scramble_raw(raw)
+  class MD5Anonymize < RawAnonymize
+    def anonymize_raw(raw)
       Digest::MD5.hexdigest(raw)
     end
   end
 
-  class IPXORScrambler < RawScrambler
+  class IPXORAnonymize < RawAnonymize
     config_param :xor_key, :string
 
     def configure(conf)
@@ -45,7 +45,7 @@ class TreasureDataLogOutput < BufferedOutput
       end
     end
 
-    def scramble_raw(raw)
+    def anonymize_raw(raw)
       a1, a2, a3, a4 = raw.split('.')
       k1, k2, k3, k4 = @xor_keys
 
@@ -143,27 +143,27 @@ class TreasureDataLogOutput < BufferedOutput
       @key = "#{database}.#{table}"
     end
 
-    @scramblers = {}
+    @anonymizes = {}
     conf.elements.select {|e|
-      e.name == 'scramble'
+      e.name == 'anonymize'
     }.each {|e|
       key = e['key']
       method = e['method']
 
       case method
       when 'md5'
-        scr = MD5Scrambler.new
+        scr = MD5Anonymize.new
       when 'ip_xor'
-        scr = IPXORScrambler.new
+        scr = IPXORAnonymize.new
       else
-        raise ConfigError, "Unknown scramble method: #{method}"
+        raise ConfigError, "Unknown anonymize method: #{method}"
       end
 
       scr.configure(e)
 
-      @scramblers[key] = scr
+      @anonymizes[key] = scr
     }
-    @scramblers = nil if @scramblers.empty?
+    @anonymizes = nil if @anonymizes.empty?
 
     @http_proxy = conf['http_proxy']
   end
@@ -198,10 +198,10 @@ class TreasureDataLogOutput < BufferedOutput
     off = out.bytesize
     es.each {|time,record|
       begin
-        if @scramblers
-          @scramblers.each_pair {|key,scr|
+        if @anonymizes
+          @anonymizes.each_pair {|key,scr|
             if value = record[key]
-              record[key] = scr.scramble(value)
+              record[key] = scr.anonymize(value)
             end
           }
         end
