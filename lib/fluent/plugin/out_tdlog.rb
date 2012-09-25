@@ -6,32 +6,32 @@ class TreasureDataLogOutput < BufferedOutput
 
   IMPORT_SIZE_LIMIT = 32*1024*1024
 
-  class Obfuscate
+  class Anonymizer
     include Configurable
   end
 
-  class RawObfuscate < Obfuscate
-    def obfuscate(obj)
+  class RawAnonymizer < Anonymizer
+    def anonymize(obj)
       if obj == nil
         nil
       elsif obj.is_a?(String)
-        obfuscate_raw obj
+        anonymize_raw obj
       elsif obj.is_a?(Numeric)
-        obfuscate_raw obj.to_s
+        anonymize_raw obj.to_s
       else
         # boolean, array, map
-        obfuscate_raw MessagePack.pack(obj)
+        anonymize_raw MessagePack.pack(obj)
       end
     end
   end
 
-  class MD5Obfuscate < RawObfuscate
-    def obfuscate_raw(raw)
+  class MD5Anonymizer < RawAnonymizer
+    def anonymize_raw(raw)
       Digest::MD5.hexdigest(raw)
     end
   end
 
-  class IPXORObfuscate < RawObfuscate
+  class IPXORAnonymizer < RawAnonymizer
     config_param :xor_key, :string
 
     def configure(conf)
@@ -45,14 +45,16 @@ class TreasureDataLogOutput < BufferedOutput
       end
     end
 
-    def obfuscate_raw(raw)
-      a1, a2, a3, a4 = raw.split('.')
+    def anonymize_raw(raw)
+      m = /\A(\d+)\.(\d+)\.(\d+)\.(\d+)/.match(raw)
+      return nil unless m
+
       k1, k2, k3, k4 = @xor_keys
 
-      o1 = a1.to_i ^ k1
-      o2 = a2.to_i ^ k2
-      o3 = a3.to_i ^ k3
-      o4 = a4.to_i ^ k4
+      o1 = m[1].to_i ^ k1
+      o2 = m[2].to_i ^ k2
+      o3 = m[3].to_i ^ k3
+      o4 = m[4].to_i ^ k4
 
       "#{o1}.#{o2}.#{o3}.#{o4}"
     end
@@ -143,27 +145,27 @@ class TreasureDataLogOutput < BufferedOutput
       @key = "#{database}.#{table}"
     end
 
-    @obfuscates = {}
+    @anonymizes = {}
     conf.elements.select {|e|
-      e.name == 'obfuscate'
+      e.name == 'anonymize'
     }.each {|e|
       key = e['key']
       method = e['method']
 
       case method
       when 'md5'
-        scr = MD5Obfuscate.new
+        scr = MD5Anonymizer.new
       when 'ip_xor'
-        scr = IPXORObfuscate.new
+        scr = IPXORAnonymizer.new
       else
-        raise ConfigError, "Unknown obfuscate method: #{method}"
+        raise ConfigError, "Unknown anonymize method: #{method}"
       end
 
       scr.configure(e)
 
-      @obfuscates[key] = scr
+      @anonymizes[key] = scr
     }
-    @obfuscates = nil if @obfuscates.empty?
+    @anonymizes = nil if @anonymizes.empty?
 
     @http_proxy = conf['http_proxy']
   end
@@ -198,10 +200,10 @@ class TreasureDataLogOutput < BufferedOutput
     off = out.bytesize
     es.each {|time,record|
       begin
-        if @obfuscates
-          @obfuscates.each_pair {|key,scr|
+        if @anonymizes
+          @anonymizes.each_pair {|key,scr|
             if value = record[key]
-              record[key] = scr.obfuscate(value)
+              record[key] = scr.anonymize(value)
             end
           }
         end
