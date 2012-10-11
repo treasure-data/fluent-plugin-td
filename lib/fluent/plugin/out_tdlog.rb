@@ -247,6 +247,7 @@ class TreasureDataLogOutput < BufferedOutput
   end
 
   def write(chunk)
+    unique_id = chunk.unique_id
     database, table = chunk.key.split('.',2)
 
     f = Tempfile.new("tdlog-", @tmpdir)
@@ -258,20 +259,21 @@ class TreasureDataLogOutput < BufferedOutput
 
     size = f.pos
     f.pos = 0
-    upload(database, table, f, size)
+    upload(database, table, f, size, unique_id)
 
   ensure
     w.close if w
     f.close if f
   end
 
-  def upload(database, table, io, size)
+  def upload(database, table, io, size, unique_id)
+    unique_str = unique_id.unpack('C*').map {|x| "%02x" % x }.join
     $log.trace { "uploading logs to Treasure Data database=#{database} table=#{table} (#{size}bytes)" }
 
     begin
       begin
         start = Time.now
-        @client.import(database, table, "msgpack.gz", io, size)
+        @client.import(database, table, "msgpack.gz", io, size, unique_str)
       rescue TreasureData::NotFoundError
         unless @auto_create_table
           raise $!
