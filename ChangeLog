@@ -1,4 +1,9 @@
 
+Release 0.10.12 - 2012/10/15
+
+  * Overwrite buffer_chunk_limit to 32MB
+
+
 Release 0.10.11 - 2012/09/26
 
   * Use unique_id supported by fluentd v0.10.27 and td-client v0.8.33
