@@ -86,13 +86,9 @@ class TreasureDataLogOutput < BufferedOutput
   def configure(conf)
     super
 
-    # force overwrite buffer_chunk_limit
-    if @buffer.respond_to?(:buffer_chunk_limit=) && @buffer.respond_to?(:buffer_queue_limit=)
-      if @buffer.buffer_chunk_limit > IMPORT_SIZE_LIMIT
-        ex = @buffer.buffer_chunk_limit / IMPORT_SIZE_LIMIT
-        @buffer.buffer_chunk_limit = IMPORT_SIZE_LIMIT
-        @buffer.buffer_queue_limit *= ex if ex > 0
-      end
+    # overwrite default value of buffer_chunk_limit
+    if @buffer.respond_to?(:buffer_chunk_limit=) && !conf['buffer_chunk_limit']
+      @buffer.buffer_chunk_limit = IMPORT_SIZE_LIMIT
     end
 
     @tmpdir = conf['tmpdir'] || @tmpdir
