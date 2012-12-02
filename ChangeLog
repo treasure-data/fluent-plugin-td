@@ -1,4 +1,9 @@
 
+Release 0.10.13 - 2012/12/02
+
+  * Normalize invalid database/table names instead of raising errors
+
+
 Release 0.10.12 - 2012/10/15
 
   * Overwrite buffer_chunk_limit to 32MB
