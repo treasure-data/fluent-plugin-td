@@ -196,6 +196,12 @@ class TreasureDataLogOutput < BufferedOutput
     off = out.bytesize
     es.each {|time,record|
       begin
+        unless record.respond_to?(:[])
+          # record is not a hash
+          # TODO message?
+          next
+        end
+
         if @anonymizes
           @anonymizes.each_pair {|key,scr|
             if value = record[key]
