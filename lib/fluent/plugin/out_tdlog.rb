@@ -164,11 +164,12 @@ class TreasureDataLogOutput < BufferedOutput
     @anonymizes = nil if @anonymizes.empty?
 
     @http_proxy = conf['http_proxy']
+    @user_agent = "fluent-plugin-td: 0.10.15"  # TODO: automatic increment version
   end
 
   def start
     super
-    @client = TreasureData::Client.new(@apikey, :ssl=>@use_ssl, :http_proxy=>@http_proxy)
+    @client = TreasureData::Client.new(@apikey, :ssl=>@use_ssl, :http_proxy=>@http_proxy, :user_agent=>@user_agent)
     unless @auto_create_table
       check_table_exists(@key)
     end
