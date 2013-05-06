@@ -247,6 +247,7 @@ class TreasureDataLogOutput < BufferedOutput
     unique_id = chunk.unique_id
     database, table = chunk.key.split('.',2)
 
+    FileUtils.mkdir_p @tmpdir
     f = Tempfile.new("tdlog-", @tmpdir)
     w = Zlib::GzipWriter.new(f)
 
