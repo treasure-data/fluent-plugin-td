@@ -71,7 +71,7 @@ class TreasureDataLogOutput < BufferedOutput
     require 'td-client'
     require 'digest/md5'
     super
-    @tmpdir = '/tmp/fluent/tdlog'
+    @tmpdir = nil
     @apikey = nil
     @key = nil
     @key_num_limit = 5120  # TODO
@@ -91,8 +91,10 @@ class TreasureDataLogOutput < BufferedOutput
       @buffer.buffer_chunk_limit = IMPORT_SIZE_LIMIT
     end
 
-    @tmpdir = conf['tmpdir'] || @tmpdir
-    FileUtils.mkdir_p(@tmpdir)
+    if conf.has_key?('tmpdir')
+      @tmpdir = conf['tmpdir']
+      FileUtils.mkdir_p(@tmpdir)
+    end
 
     @apikey = conf['apikey']
     unless @apikey
@@ -247,6 +249,7 @@ class TreasureDataLogOutput < BufferedOutput
     unique_id = chunk.unique_id
     database, table = chunk.key.split('.',2)
 
+    FileUtils.mkdir_p(@tmpdir) unless @tmpdir.nil?
     f = Tempfile.new("tdlog-", @tmpdir)
     w = Zlib::GzipWriter.new(f)
 
