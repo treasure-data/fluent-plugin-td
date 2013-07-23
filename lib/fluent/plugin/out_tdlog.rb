@@ -225,8 +225,7 @@ class TreasureDataLogOutput < BufferedOutput
       begin
         record.to_msgpack(out)
       rescue RangeError
-        # need to update td-client-ruby version
-        normalized_msgpack(record, out)
+        TreasureData::API.normalized_msgpack(record, out)
       end
 
       noff = out.bytesize
