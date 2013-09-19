@@ -60,6 +60,10 @@ class TreasureDataLogOutput < BufferedOutput
     end
   end
 
+  config_param :connect_timeout, :integer, :default => nil
+  config_param :read_timeout, :integer, :default => nil
+  config_param :send_timeout, :integer, :default => nil
+
   def initialize
     require 'fileutils'
     require 'tempfile'
@@ -161,7 +165,8 @@ class TreasureDataLogOutput < BufferedOutput
   def start
     super
 
-    @client = TreasureData::Client.new(@apikey, :ssl=>@use_ssl, :http_proxy=>@http_proxy, :user_agent=>@user_agent)
+    @client = TreasureData::Client.new(@apikey, :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent,
+      :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout)
     begin
       check_table_exists(@key) if @key
     rescue => e
