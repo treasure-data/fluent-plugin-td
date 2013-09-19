@@ -123,24 +123,13 @@ class TreasureDataLogOutput < BufferedOutput
       end
     end
 
-    unless @auto_create_table
-      database = conf['database']
-      table = conf['table']
-
-      if !database || !table
-        raise ConfigError, "'database' and 'table' parameter are required on tdlog output"
-      end
-      begin
-        TreasureData::API.validate_database_name(database)
-      rescue
-        raise ConfigError, "Invalid database name #{database.inspect}: #{$!}: #{conf}"
-      end
-      begin
-        TreasureData::API.validate_table_name(table)
-      rescue
-        raise ConfigError, "Invalid table name #{table.inspect}: #{$!}: #{conf}"
-      end
+    database = conf['database']
+    table = conf['table']
+    if database && table
+      validate_database_and_table_name(database, table, conf)
       @key = "#{database}.#{table}"
+    else
+      raise ConfigError, "'database' and 'table' parameter are required on tdlog output without auto_create_table" unless @auto_create_table
     end
 
     @anonymizes = {}
@@ -171,9 +160,17 @@ class TreasureDataLogOutput < BufferedOutput
 
   def start
     super
+
     @client = TreasureData::Client.new(@apikey, :ssl=>@use_ssl, :http_proxy=>@http_proxy, :user_agent=>@user_agent)
-    unless @auto_create_table
-      check_table_exists(@key)
+    begin
+      check_table_exists(@key) if @key
+    rescue => e
+      if @auto_create_table
+        database, table = @key.split('.', 2)
+        ensure_database_and_table(database, table)
+      else
+        raise e
+      end
     end
   end
 
@@ -282,13 +279,7 @@ class TreasureDataLogOutput < BufferedOutput
         unless @auto_create_table
           raise $!
         end
-        $log.info "Creating table #{database}.#{table} on TreasureData"
-        begin
-          @client.create_log_table(database, table)
-        rescue TreasureData::NotFoundError
-          @client.create_database(database)
-          @client.create_log_table(database, table)
-        end
+        ensure_database_and_table(database, table)
         io.pos = 0
         retry
       end
@@ -324,6 +315,29 @@ class TreasureDataLogOutput < BufferedOutput
       }
     }
     list
+  end
+
+  def validate_database_and_table_name(database, table, conf)
+    begin
+      TreasureData::API.validate_database_name(database)
+    rescue => e
+      raise ConfigError, "Invalid database name #{database.inspect}: #{e}: #{conf}"
+    end
+    begin
+      TreasureData::API.validate_table_name(table)
+    rescue => e
+      raise ConfigError, "Invalid table name #{table.inspect}: #{e}: #{conf}"
+    end
+  end
+
+  def ensure_database_and_table(database, table)
+    $log.info "Creating table #{database}.#{table} on TreasureData"
+    begin
+      @client.create_log_table(database, table)
+    rescue TreasureData::NotFoundError
+      @client.create_database(database)
+      @client.create_log_table(database, table)
+    end
   end
 end
 
