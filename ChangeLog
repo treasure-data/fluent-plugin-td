@@ -1,3 +1,10 @@
+Release 0.10.16 - 2013/09/25
+
+  * Add connect_timeout / read_timeout / send_timeout parameters
+  * Create table when 'database' and 'table' are specified with 'auto_create_table true'
+  * Update td-client to v0.8.55
+
+
 Release 0.10.15 - 2013/07/26
 
   * Add user-agent header to upload request
