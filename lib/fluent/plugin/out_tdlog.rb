@@ -303,13 +303,13 @@ class TreasureDataLogOutput < BufferedOutput
       io = StringIO.new(@create_empty_gz_data)
       begin
         @client.import(database, table, "msgpack.gz", io, io.size)
+        @table_list[key] = true
       rescue TreasureData::NotFoundError
         raise "Table #{key.inspect} does not exist on Treasure Data. Use 'td table:create #{database} #{table}' to create it."
       rescue
         $log.warn "failed to check table existence on Treasure Data", :error=>$!.to_s
         $log.debug_backtrace $!
       end
-      @table_list[key] = true
     end
   end
 
