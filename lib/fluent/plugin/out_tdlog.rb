@@ -172,7 +172,7 @@ class TreasureDataLogOutput < BufferedOutput
       if @auto_create_table
         database, table = @key.split('.')[-2,2]
         ensure_database_and_table(database, table)
-      elsif @key
+      else
         check_table_exists(@key)
       end
     end
