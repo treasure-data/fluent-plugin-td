@@ -86,7 +86,7 @@ class TreasureDataLogOutput < BufferedOutput
     @use_ssl = false
     @buffer_type = 'file'  # overwrite default buffer_type
     @flush_interval = 300  # overwrite default flush_interval to 5mins
-    @create_empty_gz_data = create_empty_gz_data
+    @empty_gz_data = create_empty_gz_data
   end
 
   def configure(conf)
