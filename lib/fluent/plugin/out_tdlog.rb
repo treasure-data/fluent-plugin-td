@@ -168,8 +168,13 @@ class TreasureDataLogOutput < BufferedOutput
     @client = TreasureData::Client.new(@apikey, :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent,
       :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout)
 
-    if @key && !@auto_create_table
-      check_table_exists(@key)
+    if @key
+      if @auto_create_table
+        database, table = @key.split('.')[-2,2]
+        ensure_database_and_table(database, table)
+      elsif @key
+        check_table_exists(@key)
+      end
     end
   end
 
