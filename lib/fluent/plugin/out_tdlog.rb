@@ -134,8 +134,6 @@ class TreasureDataLogOutput < BufferedOutput
     if database && table
       validate_database_and_table_name(database, table, conf)
       @key = "#{database}.#{table}"
-    else
-      raise ConfigError, "'database' and 'table' parameter are required on tdlog output without auto_create_table" unless @auto_create_table
     end
 
     @anonymizes = {}
