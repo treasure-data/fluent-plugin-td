@@ -305,7 +305,7 @@ class TreasureDataLogOutput < BufferedOutput
     unless @table_list.has_key?(key)
       database, table = key.split('.',2)
       $log.debug "checking whether table '#{database}.#{table}' exists on Treasure Data"
-      io = StringIO.new(@create_empty_gz_data)
+      io = StringIO.new(@empty_gz_data)
       begin
         @client.import(database, table, "msgpack.gz", io, io.size)
         @table_list[key] = true
@@ -338,6 +338,7 @@ class TreasureDataLogOutput < BufferedOutput
     rescue TreasureData::NotFoundError
       @client.create_database(database)
       @client.create_log_table(database, table)
+    rescue TreasureData::AlreadyExistsError
     end
   end
 end
