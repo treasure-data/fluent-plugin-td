@@ -3,8 +3,8 @@ $:.push File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name        = "fluent-plugin-td"
-  gem.description = "Treasure Data Big Data as a Service plugin for Fluentd"
-  gem.homepage    = "http://treasure-data.com/"
+  gem.description = "Treasure Data Cloud Data Service plugin for Fluentd"
+  gem.homepage    = "http://www.treasuredata.com/"
   gem.summary     = gem.description
   gem.version     = File.read("VERSION").strip
   gem.authors     = ["Treasure Data, Inc."]
