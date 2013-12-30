@@ -1,5 +1,7 @@
 = Treasure Data output plugin for Fluent
 
+This plugin is used to upload logs to Treasure Data using Treasure Data REST APIs.
+
 == Copyright
 
 Copyright:: Copyright (c) 2011 Treasure Data, Inc.
