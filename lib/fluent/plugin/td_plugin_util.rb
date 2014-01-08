@@ -45,6 +45,8 @@ module Fluent
         $log.debug "checking whether table '#{key}' exists on Treasure Data"
         io = StringIO.new(@empty_gz_data)
         begin
+          # here doesn't check whether target table is item table or not because import-only user can't read the table status.
+          # So I use empty import request to check table existence.
           @client.import(database, table, "msgpack.gz", io, io.size)
           @table_list[key] = true
         rescue TreasureData::NotFoundError
