@@ -15,10 +15,11 @@ class Test::Unit::TestCase
   def stub_request_body(records, time = nil)
     out = ''
     records.each { |record|
+      r = record.dup
       if time
-        record['time'] = time
+        r['time'] = time
       end
-      record.to_msgpack(out)
+      r.to_msgpack(out)
     }
 
     io = StringIO.new
@@ -32,6 +33,13 @@ class Test::Unit::TestCase
     io = StringIO.new(body)
     gz = Zlib::GzipReader.new(io)
     gz.read
+  end
+
+  def stub_td_table_create_request(database, table, ssl = true)
+    schema = ssl ? 'https' : 'http'
+    response = {"database" => database, "table" => table}.to_json
+    url = "#{schema}://#{TreasureData::API::DEFAULT_ENDPOINT}/v3/table/create/#{e(database)}/#{e(table)}/log"
+    stub_request(:post, url).to_return(:status => 200, :body => response)
   end
 
   def stub_td_import_request(body, db, table, opts = {:use_ssl => true})
