@@ -65,6 +65,8 @@ class TreasureDataLogOutput < BufferedOutput
     define_method(:log) { $log }
   end
 
+  config_param :endpoint, :string, :default => nil
+
   config_param :connect_timeout, :integer, :default => nil
   config_param :read_timeout, :integer, :default => nil
   config_param :send_timeout, :integer, :default => nil
@@ -170,8 +172,11 @@ class TreasureDataLogOutput < BufferedOutput
   def start
     super
 
-    @client = TreasureData::Client.new(@apikey, :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent,
-      :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout)
+    client_opts = {
+      :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent, :endpoint => @endpoint,
+      :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout
+    }
+    @client = TreasureData::Client.new(@apikey, client_opts)
 
     if @key
       if @auto_create_table

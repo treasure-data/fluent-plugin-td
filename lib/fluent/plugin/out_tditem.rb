@@ -18,6 +18,7 @@ module Fluent
     config_param :tmpdir, :string, :default => nil
     #config_param :auto_create_table, :bool, :default => true # TODO: implement if user wants this feature
 
+    config_param :endpoint, :string, :default => nil
     config_param :use_ssl, :bool, :default => true
     config_param :http_proxy, :string, :default => nil
     config_param :connect_timeout, :integer, :default => nil
@@ -56,8 +57,11 @@ module Fluent
     def start
       super
 
-      @client = TreasureData::Client.new(@apikey, :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent,
-        :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout)
+      client_opts = {
+        :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent, :endpoint => @endpoint,
+        :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout
+      }
+      @client = TreasureData::Client.new(@apikey, client_opts)
 
       check_table_existence(@database, @table)
     end
