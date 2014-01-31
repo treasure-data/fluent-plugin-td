@@ -1,4 +1,4 @@
-= Treasure Data output plugin for Fluent
+= Treasure Data output plugin for Fluentd
 
 This plugin is used to upload logs to Treasure Data using Treasure Data REST APIs.
 
