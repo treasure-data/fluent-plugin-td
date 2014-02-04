@@ -60,6 +60,11 @@ class TreasureDataLogOutput < BufferedOutput
     end
   end
 
+  # To support log_level option since Fluentd v0.10.43
+  unless method_defined?(:log)
+    define_method(:log) { $log }
+  end
+
   config_param :connect_timeout, :integer, :default => nil
   config_param :read_timeout, :integer, :default => nil
   config_param :send_timeout, :integer, :default => nil
@@ -218,8 +223,8 @@ class TreasureDataLogOutput < BufferedOutput
         # TODO (a) Remove the transaction mechanism of fluentd
         #      or (b) keep transaction boundaries in in/out_forward.
         #      This code disables the transaction mechanism (a).
-        $log.error "#{$!}: #{summarize_record(record)}"
-        $log.error_backtrace $!.backtrace
+        log.error "#{$!}: #{summarize_record(record)}"
+        log.error_backtrace $!.backtrace
         next
       end
 
@@ -234,7 +239,7 @@ class TreasureDataLogOutput < BufferedOutput
       if sz > @record_size_limit
         # TODO don't raise error
         #raise "Size of a record too large (#{sz} bytes)"  # TODO include summary of the record
-        $log.warn "Size of a record too large (#{sz} bytes): #{summarize_record(record)}"
+        log.warn "Size of a record too large (#{sz} bytes): #{summarize_record(record)}"
       end
       off = noff
     }
@@ -279,7 +284,7 @@ class TreasureDataLogOutput < BufferedOutput
 
   def upload(database, table, io, size, unique_id)
     unique_str = unique_id.unpack('C*').map {|x| "%02x" % x }.join
-    $log.trace { "uploading logs to Treasure Data database=#{database} table=#{table} (#{size}bytes)" }
+    log.trace { "uploading logs to Treasure Data database=#{database} table=#{table} (#{size}bytes)" }
 
     begin
       begin
@@ -304,7 +309,7 @@ class TreasureDataLogOutput < BufferedOutput
   def check_table_exists(key)
     unless @table_list.has_key?(key)
       database, table = key.split('.',2)
-      $log.debug "checking whether table '#{database}.#{table}' exists on Treasure Data"
+      log.debug "checking whether table '#{database}.#{table}' exists on Treasure Data"
       io = StringIO.new(@empty_gz_data)
       begin
         @client.import(database, table, "msgpack.gz", io, io.size)
@@ -312,8 +317,8 @@ class TreasureDataLogOutput < BufferedOutput
       rescue TreasureData::NotFoundError
         raise "Table #{key.inspect} does not exist on Treasure Data. Use 'td table:create #{database} #{table}' to create it."
       rescue
-        $log.warn "failed to check table existence on Treasure Data", :error=>$!.to_s
-        $log.debug_backtrace $!
+        log.warn "failed to check table existence on Treasure Data", :error=>$!.to_s
+        log.debug_backtrace $!
       end
     end
   end
@@ -332,7 +337,7 @@ class TreasureDataLogOutput < BufferedOutput
   end
 
   def ensure_database_and_table(database, table)
-    $log.info "Creating table #{database}.#{table} on TreasureData"
+    log.info "Creating table #{database}.#{table} on TreasureData"
     begin
       @client.create_log_table(database, table)
     rescue TreasureData::NotFoundError

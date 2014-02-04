@@ -42,7 +42,7 @@ module Fluent
       @table_list ||= {}
       key = "#{database}.#{table}"
       unless @table_list.has_key?(key)
-        $log.debug "checking whether table '#{key}' exists on Treasure Data"
+        log.debug "checking whether table '#{key}' exists on Treasure Data"
         io = StringIO.new(@empty_gz_data)
         begin
           # here doesn't check whether target table is item table or not because import-only user can't read the table status.
@@ -53,8 +53,8 @@ module Fluent
           args = self.class == TreasureDataItemOutput ? ' -t item' : ''
           raise "Table #{key.inspect} does not exist on Treasure Data. Use 'td table:create #{database} #{table}#{args}' to create it."
         rescue => e
-          $log.warn "failed to check table existence on Treasure Data", :error => e.to_s
-          $log.debug_backtrace $!
+          log.warn "failed to check table existence on Treasure Data", :error => e.to_s
+          log.debug_backtrace e
         end
       end
     end
@@ -82,7 +82,7 @@ module Fluent
     # assume @client and @auto_create_table variable exist
     def upload(database, table, io, size, unique_id)
       unique_str = unique_id.unpack('C*').map {|x| "%02x" % x }.join
-      $log.trace { "uploading logs to Treasure Data database=#{database} table=#{table} (#{size}bytes)" }
+      log.trace { "uploading logs to Treasure Data database=#{database} table=#{table} (#{size}bytes)" }
 
       begin
         begin

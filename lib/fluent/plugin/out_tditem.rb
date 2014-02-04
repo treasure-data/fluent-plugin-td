@@ -7,6 +7,11 @@ module Fluent
 
     IMPORT_SIZE_LIMIT = 32 * 1024 * 1024
 
+    # To support log_level option since Fluentd v0.10.43
+    unless method_defined?(:log)
+      define_method(:log) { $log }
+    end
+
     config_param :apikey, :string
     config_param :database, :string
     config_param :table, :string
@@ -66,7 +71,7 @@ module Fluent
       off = out.bytesize
       es.each { |time, record|
         if record.size > @key_num_limit
-          $log.error "Too many number of keys (#{record.size} keys)" # TODO include summary of the record
+          log.error "Too many number of keys (#{record.size} keys)" # TODO include summary of the record
           next
         end
 
@@ -81,7 +86,7 @@ module Fluent
         if sz > @record_size_limit
           # TODO don't raise error
           #raise "Size of a record too large (#{sz} bytes)"  # TODO include summary of the record
-          $log.warn "Size of a record too large (#{sz} bytes): #{summarize_record(record)}"
+          log.warn "Size of a record too large (#{sz} bytes): #{summarize_record(record)}"
         end
         off = noff
       }
