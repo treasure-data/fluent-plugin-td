@@ -300,7 +300,7 @@ class TreasureDataLogOutput < BufferedOutput
       end
     rescue => e
       elapsed = Time.now - start
-      ne = RuntimeError.new("Failed to upload to TreasureData: #{$!} (#{size} bytes; #{elapsed} seconds)")
+      ne = RuntimeError.new("Failed to upload to Treasure Data '#{database}.#{table}' table: #{$!} (#{size} bytes; #{elapsed} seconds)")
       ne.set_backtrace(e.backtrace)
       raise ne
     end
@@ -317,7 +317,7 @@ class TreasureDataLogOutput < BufferedOutput
       rescue TreasureData::NotFoundError
         raise "Table #{key.inspect} does not exist on Treasure Data. Use 'td table:create #{database} #{table}' to create it."
       rescue
-        log.warn "failed to check table existence on Treasure Data", :error=>$!.to_s
+        log.warn "failed to check existence of '#{database}.#{table}' table on Treasure Data", :error=>$!.to_s
         log.debug_backtrace $!
       end
     end
