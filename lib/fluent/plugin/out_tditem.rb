@@ -52,6 +52,11 @@ module Fluent
       @key = "#{@database}.#{@table}".freeze
       @use_ssl = parse_bool_parameter(@use_ssl) if @use_ssl.instance_of?(String)
       FileUtils.mkdir_p(@tmpdir) unless @tmpdir.nil?
+
+      if @endpoint.nil?
+        $log.warn "tditem plugin will change the API endpoint from api.treasure-data.com to api.treasuredata.com"
+        $log.warn "If want to keep api.treasure-data.com, please set 'endpoint api.treasure-data.com' in tditem configuration"
+      end
     end
 
     def start
