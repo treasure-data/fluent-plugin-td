@@ -1,3 +1,12 @@
+Release 0.10.18 - 2014/03/31
+
+  * use_ssl is true by default
+  * Support log_level option
+  * Add endpoint option to set treasuredata.com for the future
+  * Add experimental out_tditem plugin for item table
+  * Update td-client to v0.8.58
+
+
 Release 0.10.17 - 2013/12/05
 
   * Change table create / check mechanizm
