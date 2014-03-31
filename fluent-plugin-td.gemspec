@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_dependency "fluentd", "~> 0.10.27"
-  gem.add_dependency "td-client", "~> 0.8.57"
+  gem.add_dependency "td-client", "~> 0.8.58"
   gem.add_development_dependency "rake", ">= 0.9.2"
   gem.add_development_dependency "webmock", "~> 1.16"
 end
