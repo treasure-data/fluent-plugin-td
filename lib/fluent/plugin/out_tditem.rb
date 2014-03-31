@@ -18,6 +18,7 @@ module Fluent
     config_param :tmpdir, :string, :default => nil
     #config_param :auto_create_table, :bool, :default => true # TODO: implement if user wants this feature
 
+    config_param :endpoint, :string, :default => nil
     config_param :use_ssl, :bool, :default => true
     config_param :http_proxy, :string, :default => nil
     config_param :connect_timeout, :integer, :default => nil
@@ -51,13 +52,21 @@ module Fluent
       @key = "#{@database}.#{@table}".freeze
       @use_ssl = parse_bool_parameter(@use_ssl) if @use_ssl.instance_of?(String)
       FileUtils.mkdir_p(@tmpdir) unless @tmpdir.nil?
+
+      if @endpoint.nil?
+        $log.warn "tditem plugin will change the API endpoint from api.treasure-data.com to api.treasuredata.com"
+        $log.warn "If want to keep api.treasure-data.com, please set 'endpoint api.treasure-data.com' in tditem configuration"
+      end
     end
 
     def start
       super
 
-      @client = TreasureData::Client.new(@apikey, :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent,
-        :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout)
+      client_opts = {
+        :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent, :endpoint => @endpoint,
+        :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout
+      }
+      @client = TreasureData::Client.new(@apikey, client_opts)
 
       check_table_existence(@database, @table)
     end

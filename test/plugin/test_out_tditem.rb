@@ -56,9 +56,23 @@ class TreasureDataItemOutputTest < Test::Unit::TestCase
   def test_emit
     d = create_driver
 
-    time = Time.parse("2014-01-01 00:00:00 UTC").to_i
-    records = [{"a" => 1}, {"a" => 2}]
+    time, records = stub_seed_values
     stub_td_import_request(stub_request_body(records), d.instance.database, d.instance.table)
+
+    records.each { |record|
+      d.emit(record, time)
+    }
+    d.run
+
+    assert_equal(@auth_header, 'TD1 testkey')
+  end
+
+  def test_emit
+    d = create_driver(DEFAULT_CONFIG + "endpoint foo.bar.baz")
+    opts = {:endpoint => 'foo.bar.baz'}
+
+    time, records = stub_seed_values
+    stub_td_import_request(stub_request_body(records), d.instance.database, d.instance.table, opts)
 
     records.each { |record|
       d.emit(record, time)

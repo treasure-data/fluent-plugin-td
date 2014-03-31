@@ -44,8 +44,7 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
   def test_emit
     d = create_driver
 
-    time = Time.parse("2014-01-01 00:00:00 UTC").to_i
-    records = [{"a" => 1}, {"a" => 2}]
+    time, records = stub_seed_values
     database, table = d.instance.instance_variable_get(:@key).split(".", 2)
     stub_td_table_create_request(database, table)
     stub_td_import_request(stub_request_body(records, time), database, table)
@@ -56,6 +55,20 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     d.run
 
     assert_equal(@auth_header, 'TD1 testkey')
+  end
+
+  def test_emit_with_endpoint
+    d = create_driver(DEFAULT_CONFIG + "endpoint foo.bar.baz")
+    opts = {:endpoint => 'foo.bar.baz'}
+    time, records = stub_seed_values
+    database, table = d.instance.instance_variable_get(:@key).split(".", 2)
+    stub_td_table_create_request(database, table, opts)
+    stub_td_import_request(stub_request_body(records, time), database, table, opts)
+
+    records.each { |record|
+      d.emit(record, time)
+    }
+    d.run
   end
 
   # TODO: add normalized_msgpack / key_num_limit / tag split test
