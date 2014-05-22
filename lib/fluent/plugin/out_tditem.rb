@@ -18,7 +18,7 @@ module Fluent
     config_param :tmpdir, :string, :default => nil
     #config_param :auto_create_table, :bool, :default => true # TODO: implement if user wants this feature
 
-    config_param :endpoint, :string, :default => nil
+    config_param :endpoint, :string, :default => TreasureData::API::DEFAULT_ENDPOINT
     config_param :use_ssl, :bool, :default => true
     config_param :http_proxy, :string, :default => nil
     config_param :connect_timeout, :integer, :default => nil
@@ -52,11 +52,6 @@ module Fluent
       @key = "#{@database}.#{@table}".freeze
       @use_ssl = parse_bool_parameter(@use_ssl) if @use_ssl.instance_of?(String)
       FileUtils.mkdir_p(@tmpdir) unless @tmpdir.nil?
-
-      if @endpoint.nil?
-        $log.warn "tditem plugin will change the API endpoint from api.treasure-data.com to api.treasuredata.com"
-        $log.warn "If want to keep api.treasure-data.com, please set 'endpoint api.treasure-data.com' in tditem configuration"
-      end
     end
 
     def start

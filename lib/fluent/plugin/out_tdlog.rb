@@ -65,7 +65,7 @@ class TreasureDataLogOutput < BufferedOutput
     define_method(:log) { $log }
   end
 
-  config_param :endpoint, :string, :default => nil
+  config_param :endpoint, :string, :default => TreasureData::API::DEFAULT_ENDPOINT
 
   config_param :connect_timeout, :integer, :default => nil
   config_param :read_timeout, :integer, :default => nil
@@ -167,11 +167,6 @@ class TreasureDataLogOutput < BufferedOutput
 
     @http_proxy = conf['http_proxy']
     @user_agent = "fluent-plugin-td: 0.10.18"  # TODO: automatic increment version
-
-    if @endpoint.nil?
-      $log.warn "tdlog plugin will change the API endpoint from api.treasure-data.com to api.treasuredata.com"
-      $log.warn "If want to keep api.treasure-data.com, please set 'endpoint api.treasure-data.com' in tdlog configuration"
-    end
   end
 
   def start
