@@ -18,7 +18,7 @@ module Fluent
     config_param :tmpdir, :string, :default => nil
     #config_param :auto_create_table, :bool, :default => true # TODO: implement if user wants this feature
 
-    config_param :endpoint, :string, :default => TreasureData::API::DEFAULT_ENDPOINT
+    config_param :endpoint, :string, :default => TreasureData::API::NEW_DEFAULT_ENDPOINT
     config_param :use_ssl, :bool, :default => true
     config_param :http_proxy, :string, :default => nil
     config_param :connect_timeout, :integer, :default => nil

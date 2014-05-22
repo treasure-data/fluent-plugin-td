@@ -65,7 +65,7 @@ class TreasureDataLogOutput < BufferedOutput
     define_method(:log) { $log }
   end
 
-  config_param :endpoint, :string, :default => TreasureData::API::DEFAULT_ENDPOINT
+  config_param :endpoint, :string, :default => TreasureData::API::NEW_DEFAULT_ENDPOINT
 
   config_param :connect_timeout, :integer, :default => nil
   config_param :read_timeout, :integer, :default => nil
