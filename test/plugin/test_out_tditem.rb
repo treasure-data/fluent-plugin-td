@@ -29,10 +29,12 @@ class TreasureDataItemOutputTest < Test::Unit::TestCase
   def test_configure
     d = create_driver
 
-    assert_equal(d.instance.apikey, 'testkey')
-    assert_equal(d.instance.database, 'test')
-    assert_equal(d.instance.table, 'table')
-    assert_equal(d.instance.use_ssl, true)
+    assert_equal('testkey', d.instance.apikey)
+    assert_equal('test', d.instance.database)
+    assert_equal('table', d.instance.table)
+    assert_equal(true, d.instance.use_ssl)
+    assert_equal('memory', d.instance.buffer_type)
+    assert_equal(300, d.instance.flush_interval)
   end
 
   def test_configure_with_invalid_database
@@ -64,7 +66,7 @@ class TreasureDataItemOutputTest < Test::Unit::TestCase
     }
     d.run
 
-    assert_equal(@auth_header, 'TD1 testkey')
+    assert_equal('TD1 testkey', @auth_header)
   end
 
   def test_emit
@@ -79,6 +81,6 @@ class TreasureDataItemOutputTest < Test::Unit::TestCase
     }
     d.run
 
-    assert_equal(@auth_header, 'TD1 testkey')
+    assert_equal('TD1 testkey', @auth_header)
   end
 end

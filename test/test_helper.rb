@@ -45,7 +45,7 @@ class Test::Unit::TestCase
     opts[:use_ssl] = true unless opts.has_key?(:use_ssl)
     schema = opts[:use_ssl] ? 'https' : 'http'
     response = {"database" => database, "table" => table}.to_json
-    endpoint = opts[:endpoint] ? opts[:endpoint] : TreasureData::API::DEFAULT_ENDPOINT
+    endpoint = opts[:endpoint] ? opts[:endpoint] : TreasureData::API::NEW_DEFAULT_ENDPOINT
 
     url = "#{schema}://#{endpoint}/v3/table/create/#{e(database)}/#{e(table)}/log"
     stub_request(:post, url).to_return(:status => 200, :body => response)
@@ -56,7 +56,7 @@ class Test::Unit::TestCase
     format = opts[:format] || 'msgpack.gz'
     schema = opts[:use_ssl] ? 'https' : 'http'
     response = {"database" => db, "table" => table, "elapsed_time" => 0}.to_json
-    endpoint = opts[:endpoint] ? opts[:endpoint] : TreasureData::API::DEFAULT_IMPORT_ENDPOINT
+    endpoint = opts[:endpoint] ? opts[:endpoint] : TreasureData::API::NEW_DEFAULT_IMPORT_ENDPOINT
 
     # for check_table_existence
     url_with_empty = "#{schema}://#{endpoint}//v3/table/import/#{e(db)}/#{e(table)}/#{format}"

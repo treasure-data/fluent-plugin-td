@@ -54,7 +54,7 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     }
     d.run
 
-    assert_equal(@auth_header, 'TD1 testkey')
+    assert_equal('TD1 testkey', @auth_header)
   end
 
   def test_emit_with_endpoint
