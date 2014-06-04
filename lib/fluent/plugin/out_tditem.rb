@@ -24,6 +24,8 @@ module Fluent
     config_param :connect_timeout, :integer, :default => nil
     config_param :read_timeout, :integer, :default => nil
     config_param :send_timeout, :integer, :default => nil
+    config_set_default :buffer_type, 'file'
+    config_set_default :flush_interval, 300
 
     def initialize
       super
@@ -34,10 +36,6 @@ module Fluent
       @record_size_limit = 32 * 1024 * 1024  # TODO
       @empty_gz_data = TreasureData::API.create_empty_gz_data
       @user_agent = "fluent-plugin-td-item: 0.10.18".freeze  # TODO: automatic increment version
-
-      # overwrite default configurations
-      @buffer_type = 'file'
-      @flush_interval = 300
     end
 
     def configure(conf)

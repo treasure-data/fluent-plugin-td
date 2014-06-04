@@ -70,6 +70,8 @@ class TreasureDataLogOutput < BufferedOutput
   config_param :connect_timeout, :integer, :default => nil
   config_param :read_timeout, :integer, :default => nil
   config_param :send_timeout, :integer, :default => nil
+  config_set_default :buffer_type, 'file'
+  config_set_default :flush_interval, 300
 
   def initialize
     require 'fileutils'
@@ -91,8 +93,6 @@ class TreasureDataLogOutput < BufferedOutput
     @table_list = {}
     @auto_create_table = true
     @use_ssl = true
-    @buffer_type = 'file'  # overwrite default buffer_type
-    @flush_interval = 300  # overwrite default flush_interval to 5mins
     @empty_gz_data = create_empty_gz_data
   end
 
