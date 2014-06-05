@@ -167,7 +167,7 @@ class TreasureDataLogOutput < BufferedOutput
     @anonymizes = nil if @anonymizes.empty?
 
     @http_proxy = conf['http_proxy']
-    @user_agent = "fluent-plugin-td: 0.10.19"  # TODO: automatic increment version
+    @user_agent = "fluent-plugin-td: 0.10.20"  # TODO: automatic increment version
   end
 
   def start

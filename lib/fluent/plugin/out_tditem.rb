@@ -37,7 +37,7 @@ module Fluent
       @key_num_limit = 1024  # Item table default limitation
       @record_size_limit = 32 * 1024 * 1024  # TODO
       @empty_gz_data = TreasureData::API.create_empty_gz_data
-      @user_agent = "fluent-plugin-td-item: 0.10.19".freeze  # TODO: automatic increment version
+      @user_agent = "fluent-plugin-td-item: 0.10.20".freeze  # TODO: automatic increment version
     end
 
     def configure(conf)
