@@ -1,3 +1,5 @@
+require 'td-client'
+
 module Fluent
   class TreasureDataItemOutput < BufferedOutput
     Plugin.register_output('tditem', self)

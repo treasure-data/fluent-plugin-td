@@ -1,3 +1,5 @@
+require 'td-client'
+
 module Fluent
 
 
@@ -81,7 +83,6 @@ class TreasureDataLogOutput < BufferedOutput
     require 'json'
     require 'cgi' # CGI.escape
     require 'time' # Time#rfc2822
-    require 'td-client'
     require 'digest/md5'
     require 'stringio'
     super
