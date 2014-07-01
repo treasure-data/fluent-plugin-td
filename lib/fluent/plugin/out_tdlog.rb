@@ -92,7 +92,7 @@ module Fluent
       @table_list = {}
       @auto_create_table = true
       @use_ssl = true
-      @empty_gz_data = create_empty_gz_data
+      @empty_gz_data = TreasureData::API.create_empty_gz_data
     end
 
     def configure(conf)
@@ -278,12 +278,6 @@ module Fluent
     ensure
       w.close if w
       f.close if f
-    end
-
-    def create_empty_gz_data
-      io = StringIO.new
-      Zlib::GzipWriter.new(io).close
-      io.string
     end
 
     def upload(database, table, io, size, unique_id)
