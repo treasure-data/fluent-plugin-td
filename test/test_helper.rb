@@ -12,6 +12,12 @@ def e(s)
 end
 
 class Test::Unit::TestCase
+  def create_too_many_keys_record
+    record = {}
+    5012.times { |i| record["k#{i}"] = i }
+    record
+  end
+
   def stub_seed_values
     time = Time.parse("2014-01-01 00:00:00 UTC").to_i
     records = [{"a" => 1}, {"a" => 2}]

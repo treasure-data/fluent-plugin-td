@@ -57,7 +57,6 @@ class TreasureDataItemOutputTest < Test::Unit::TestCase
 
   def test_emit
     d = create_driver
-
     time, records = stub_seed_values
     stub_td_import_request(stub_request_body(records), d.instance.database, d.instance.table)
 
@@ -69,10 +68,9 @@ class TreasureDataItemOutputTest < Test::Unit::TestCase
     assert_equal('TD1 testkey', @auth_header)
   end
 
-  def test_emit
+  def test_emit_with_endpoint
     d = create_driver(DEFAULT_CONFIG + "endpoint foo.bar.baz")
     opts = {:endpoint => 'foo.bar.baz'}
-
     time, records = stub_seed_values
     stub_td_import_request(stub_request_body(records), d.instance.database, d.instance.table, opts)
 
@@ -82,5 +80,20 @@ class TreasureDataItemOutputTest < Test::Unit::TestCase
     d.run
 
     assert_equal('TD1 testkey', @auth_header)
+  end
+
+  def test_emit_with_too_many_keys
+    d = create_driver(DEFAULT_CONFIG + "endpoint foo.bar.baz")
+    opts = {:endpoint => 'foo.bar.baz'}
+    time, _ = stub_seed_values
+    stub_td_import_request(stub_request_body([]), d.instance.database, d.instance.table, opts)
+
+    d.emit(create_too_many_keys_record, time)
+    d.run
+
+    assert_equal 0, d.emits.size
+    assert d.instance.log.logs.select{ |line|
+      line =~ / \[error\]: Too many number of keys/
+    }.size == 1, "too many keys error is not logged"
   end
 end

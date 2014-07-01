@@ -43,7 +43,6 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
 
   def test_emit
     d = create_driver
-
     time, records = stub_seed_values
     database, table = d.instance.instance_variable_get(:@key).split(".", 2)
     stub_td_table_create_request(database, table)
@@ -71,7 +70,24 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     d.run
   end
 
-  # TODO: add normalized_msgpack / key_num_limit / tag split test
+  def test_emit_with_too_many_keys
+    d = create_driver(DEFAULT_CONFIG + "endpoint foo.bar.baz")
+    opts = {:endpoint => 'foo.bar.baz'}
+    time, records = stub_seed_values
+    database, table = d.instance.instance_variable_get(:@key).split(".", 2)
+    stub_td_table_create_request(database, table, opts)
+    stub_td_import_request(stub_request_body([], time), database, table, opts)
+
+    d.emit(create_too_many_keys_record, time)
+    d.run
+
+    assert_equal 0, d.emits.size
+    assert d.instance.log.logs.select{ |line|
+      line =~ / \[error\]: Too many number of keys/
+    }.size == 1, "too many keys error is not logged"
+  end
+
+  # TODO: add normalized_msgpack / tag split test
 
 ## TODO invalid names are normalized
 #  def test_invalid_name
