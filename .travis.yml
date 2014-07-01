@@ -6,6 +6,5 @@ rvm:
 
 gemfile:
  - Gemfile
- - Gemfile.fluentd.lt.0.10.43
 
 script: bundle exec rake test
