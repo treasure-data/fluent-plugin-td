@@ -222,7 +222,6 @@ module Fluent
           if record.size > @key_num_limit
             raise "Too many number of keys (#{record.size} keys)"  # TODO include summary of the record
           end
-
         rescue => e
           # TODO (a) Remove the transaction mechanism of fluentd
           #      or (b) keep transaction boundaries in in/out_forward.
@@ -251,7 +250,7 @@ module Fluent
     end
 
     def summarize_record(record)
-      json = record.to_json
+      json = Yajl.dump(record)
       if json.size > 100
         json[0..97] + "..."
       else
