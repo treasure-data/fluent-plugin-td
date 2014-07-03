@@ -1,3 +1,9 @@
+Release 0.10.21 - 2014/07/04
+
+  * Use Yajl for summarizing json
+  * Change key_num_limit to 512
+
+
 Release 0.10.20 - 2014/06/05
 
   * Fix require order bug for td-client-ruby
