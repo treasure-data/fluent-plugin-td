@@ -3,9 +3,7 @@
 This Fluentd output plugin is used to upload logs to Treasure Data using
 Treasure Data's REST APIs.
 
-This plugin relies on the Treasure Data's
-{Ruby client library}[https://github.com/treasure-data/td-client-ruby]
-to communicate with the Treasure Data's REST APIs.
+This plugin relies on the Treasure Data's {Ruby client library}[https://github.com/treasure-data/td-client-ruby] to communicate with the Treasure Data's REST APIs.
 
 For more information, please visit the official {Fluentd TD Output plugin}[http://docs.fluentd.org/articles/http-to-td] page at http://docs.fluentd.org.
 
@@ -16,51 +14,50 @@ root of this repository for some examples. The configuration file allows the use
 
 The configuration options currently supported are:
 
-* +apikey+<br>
-  sets the configuration parameter to specify the Treasure Data API key.<br>
-  Requires the API key as argument.<br>
+* +apikey+
+  sets the configuration parameter to specify the Treasure Data API key.
+  Requires the API key as argument.
   This parameter is *required*.
-* +auto_create_table+<br>
+* +auto_create_table+
   specifies whether to create a database and/or table if the destination
-  database and/or table do not exist.<br>
-  Requires no argument to enable; one optional boolean (true or false) argument accepted.<br>
+  database and/or table do not exist.
+  Requires no argument to enable; one optional boolean (true or false) argument accepted.
   When this option is enabled, the destination database and table will be
   determined based on the *event* *tag*: e.g. an even with tag 'td.mydb.mytable'
   will require the plugin to upload data to the 'mydb' database and 'mytable'
-  table within it.<br>
+  table within it.
   If this option is not used or set to false, the user is *required* to specify
-  the +database+ and +table+ configuration parameters as explained below.<br>
+  the +database+ and +table+ configuration parameters as explained below.
   *NOTE*::
   depending on the access control permissions associated
   to the API key, a database can or cannot be created if not already available.
-  See
-* +database+<br>
-  specifies the destination database in the Treasure Data cloud.<br>
-  Requires the database name as argument.<br>
+  See the {Treasure Data Access Control documentation}[http://docs.treasuredata.com/articles/access-control] page for details.
+* +database+
+  specifies the destination database in the Treasure Data cloud.
+  Requires the database name as argument.
   This parameter is *required* unless the +auto_create_table+ option is used.
-* +table+<br>
-  specifies the destination table in the above mentioned database within the Treasure Data cloud.<br>
-  Requires the table name as argument.<br>
+* +table+
+  specifies the destination table in the above mentioned database within the Treasure Data cloud.
+  Requires the table name as argument.
   This parameter is *required* unless the +auto_create_table+ option is used.
-* +endpoint+<br>
-  specifies the Treasure Data's REST API endpoint.<br>
-  Requires the endpoint as argument.<br>
+* +endpoint+
+  specifies the Treasure Data's REST API endpoint.
+  Requires the endpoint as argument.
   If not specified, a default is used; please refer to the {td-client-ruby's :endpoint}[https://github.com/treasure-data/td-client-ruby#endpoint] option for more details.
-* +use_ssl+<br>
-  specifies whether to communicate using SSL encryption over HTTPS.<br>
-  Requires no argument to enable; one optional boolean (true or false) argument accepted.<br>
+* +use_ssl+
+  specifies whether to communicate using SSL encryption over HTTPS.
+  Requires no argument to enable; one optional boolean (true or false) argument accepted.
   This option corresponds to {td-client-ruby's :ssl}[https://github.com/treasure-data/td-client-ruby#ssl] option: please refer to that page for important information concerning it.
-* +http_proxy+<br>
-  If communication with the Treasure Data API endpoint has to occur through an
-  proxy, this option allow setting it.<br>
+* +http_proxy+
+  If communication with the Treasure Data API endpoint has to occur through a proxy, you can use this option to configure it.
   Requires the proxy URL as argument. Please refer to the {td-client-ruby's :http_proxy}[https://github.com/treasure-data/td-client-ruby#proxy] option for details.
-* +connect_timeout+, +read_timeout+, +send_timeout+<br>
-  All three options specify the timeout used for every connection, when reading data from the Treasure Data API endpoints, and when sending data to it.<br>
-  They require the number of seconds for the timeout as argument.<br>
+* +connect_timeout+, +read_timeout+, +send_timeout+
+  All three options specify the timeout used for every connection, when reading data from the Treasure Data API endpoints, and when sending data to it.
+  They require the number of seconds for the timeout as argument.
   Please refer to the {td-client-ruby's :connect_timeout, :read_timeout, :send_timeout}[https://github.com/treasure-data/td-client-ruby#connection-read-and-send-timeouts] options for details.
-* +tmpdir+<br>
+* +tmpdir+
   specifies the temporary folder to use for storing the temporarily converted
-  and compressed inputs.<br>
+  and compressed inputs.
   Requires the path to the temporary folder as argument. If not specified, the system default as specified by Ruby's +Dir.tmpdir+ is used (the +TMPDIR+ environment variable is honored).
 
 == Copyright
