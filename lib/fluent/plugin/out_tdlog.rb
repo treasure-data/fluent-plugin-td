@@ -222,6 +222,7 @@ module Fluent
           end
 
           record['time'] = time
+          record.delete(:time) if record.has_key?(:time)
 
           if record.size > @key_num_limit
             raise "Too many number of keys (#{record.size} keys)"  # TODO include summary of the record
