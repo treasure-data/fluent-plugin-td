@@ -162,7 +162,11 @@ module Fluent
 
         @anonymizes[key] = scr
       }
-      @anonymizes = nil if @anonymizes.empty?
+      if @anonymizes.empty?
+        @anonymizes = nil
+      else
+        log.warn "<anonymize> feature is deprecated and will be removed. Use fluent-plugin-anonymizer instead."
+      end
 
       @http_proxy = conf['http_proxy']
       @user_agent = "fluent-plugin-td: 0.10.21"  # TODO: automatic increment version
