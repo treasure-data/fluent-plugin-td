@@ -1,12 +1,13 @@
 # encoding: utf-8
 $:.push File.expand_path('../lib', __FILE__)
+require 'fluent/plugin/td_plugin_version'
 
 Gem::Specification.new do |gem|
   gem.name        = "fluent-plugin-td"
   gem.description = "Treasure Data Cloud Data Service plugin for Fluentd"
   gem.homepage    = "http://www.treasuredata.com/"
   gem.summary     = gem.description
-  gem.version     = File.read("VERSION").strip
+  gem.version     = Fluent::TreasureDataPlugin::VERSION
   gem.authors     = ["Treasure Data, Inc."]
   gem.email       = "support@treasure-data.com"
   gem.has_rdoc    = false

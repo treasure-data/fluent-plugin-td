@@ -1,4 +1,5 @@
 require 'td-client'
+require 'fluent/plugin/td_plugin_version'
 
 module Fluent
   class TreasureDataLogOutput < BufferedOutput
@@ -93,6 +94,7 @@ module Fluent
       @auto_create_table = true
       @use_ssl = true
       @empty_gz_data = TreasureData::API.create_empty_gz_data
+      @user_agent = "fluent-plugin-td: #{TreasureDataPlugin::VERSION}".freeze
     end
 
     def configure(conf)
@@ -169,7 +171,6 @@ module Fluent
       end
 
       @http_proxy = conf['http_proxy']
-      @user_agent = "fluent-plugin-td: 0.10.21"  # TODO: automatic increment version
     end
 
     def start
