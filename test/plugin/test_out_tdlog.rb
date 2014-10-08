@@ -56,6 +56,22 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     assert_equal('TD1 testkey', @auth_header)
   end
 
+  def test_emit_with_time_symbole
+    d = create_driver
+    time, records = stub_seed_values
+    database, table = d.instance.instance_variable_get(:@key).split(".", 2)
+    stub_td_table_create_request(database, table)
+    stub_td_import_request(stub_request_body(records, time), database, table)
+
+    records.each { |record|
+      record[:time] = Time.now.to_i  # emit removes this :time key
+      d.emit(record, time)
+    }
+    d.run
+
+    assert_equal('TD1 testkey', @auth_header)
+  end
+
   def test_emit_with_endpoint
     d = create_driver(DEFAULT_CONFIG + "endpoint foo.bar.baz")
     opts = {:endpoint => 'foo.bar.baz'}
