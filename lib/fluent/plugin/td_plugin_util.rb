@@ -53,7 +53,7 @@ module Fluent
           args = self.class == TreasureDataItemOutput ? ' -t item' : ''
           raise "Table #{key.inspect} does not exist on Treasure Data. Use 'td table:create #{database} #{table}#{args}' to create it."
         rescue => e
-          log.warn "failed to check table existence on Treasure Data", :error => e.to_s
+          log.warn "failed to check table existence on Treasure Data", :error => e.inspect
           log.debug_backtrace e
         end
       end

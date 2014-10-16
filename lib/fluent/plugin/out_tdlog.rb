@@ -303,7 +303,7 @@ module Fluent
         end
       rescue => e
         elapsed = Time.now - start
-        ne = RuntimeError.new("Failed to upload to Treasure Data '#{database}.#{table}' table: #{$!} (#{size} bytes; #{elapsed} seconds)")
+        ne = RuntimeError.new("Failed to upload to Treasure Data '#{database}.#{table}' table: #{e.inspect} (#{size} bytes; #{elapsed} seconds)")
         ne.set_backtrace(e.backtrace)
         raise ne
       end
@@ -320,7 +320,7 @@ module Fluent
         rescue TreasureData::NotFoundError
           raise "Table #{key.inspect} does not exist on Treasure Data. Use 'td table:create #{database} #{table}' to create it."
         rescue => e
-          log.warn "failed to check existence of '#{database}.#{table}' table on Treasure Data", :error => e.to_s
+          log.warn "failed to check existence of '#{database}.#{table}' table on Treasure Data", :error => e.inspect
           log.debug_backtrace e.backtrace
         end
       end
