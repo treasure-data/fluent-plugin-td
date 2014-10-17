@@ -1,3 +1,11 @@
+Release 0.10.22 - 2014/10/17
+
+  * Remove :time key from a record
+  * Show deperecated warning for <anonymize>
+  * Use Error#inspect to get error class in error log
+  * Update td-client to v0.8.66
+
+
 Release 0.10.21 - 2014/07/04
 
   * Use Yajl for summarizing json
