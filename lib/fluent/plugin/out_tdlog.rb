@@ -66,8 +66,11 @@ module Fluent
       define_method(:log) { $log }
     end
 
-    config_param :endpoint, :string, :default => TreasureData::API::NEW_DEFAULT_ENDPOINT
+    config_param :apikey, :string
+    config_param :auto_create_table, :bool, :default => true
 
+    config_param :endpoint, :string, :default => TreasureData::API::NEW_DEFAULT_ENDPOINT
+    config_param :use_ssl, :bool, :default => true
     config_param :connect_timeout, :integer, :default => nil
     config_param :read_timeout, :integer, :default => nil
     config_param :send_timeout, :integer, :default => nil
@@ -86,13 +89,10 @@ module Fluent
       require 'stringio'
       super
       @tmpdir = nil
-      @apikey = nil
       @key = nil
       @key_num_limit = 512  # TODO: Our one-time import has the restriction about the number of record keys.
       @record_size_limit = 32 * 1024 * 1024  # TODO
       @table_list = {}
-      @auto_create_table = true
-      @use_ssl = true
       @empty_gz_data = TreasureData::API.create_empty_gz_data
       @user_agent = "fluent-plugin-td: #{TreasureDataPlugin::VERSION}".freeze
     end
@@ -101,40 +101,13 @@ module Fluent
       super
 
       # overwrite default value of buffer_chunk_limit
-      if @buffer.respond_to?(:buffer_chunk_limit=) && !conf['buffer_chunk_limit']
+      if !conf['buffer_chunk_limit']
         @buffer.buffer_chunk_limit = IMPORT_SIZE_LIMIT
       end
 
       if conf.has_key?('tmpdir')
         @tmpdir = conf['tmpdir']
         FileUtils.mkdir_p(@tmpdir)
-      end
-
-      @apikey = conf['apikey']
-      unless @apikey
-        raise ConfigError, "'apikey' parameter is required on tdlog output"
-      end
-
-      if auto_create_table = conf['auto_create_table']
-        if auto_create_table.empty?
-          @auto_create_table = true
-        else
-          @auto_create_table = Config.bool_value(auto_create_table)
-          if @auto_create_table == nil
-            raise ConfigError, "'true' or 'false' is required for auto_create_table option on tdlog output"
-          end
-        end
-      end
-
-      if use_ssl = conf['use_ssl']
-        if use_ssl.empty?
-          @use_ssl = true
-        else
-          @use_ssl = Config.bool_value(use_ssl)
-          if @use_ssl == nil
-            raise ConfigError, "'true' or 'false' is required for use_ssl option on tdlog output"
-          end
-        end
       end
 
       database = conf['database']
