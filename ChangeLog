@@ -1,3 +1,8 @@
+Release 0.10.23 - 2014/12/08
+
+  * Relax fluentd version restriction
+
+
 Release 0.10.22 - 2014/10/17
 
   * Remove :time key from a record
