@@ -99,7 +99,7 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
 
     assert_equal 0, d.emits.size
     assert d.instance.log.logs.select{ |line|
-      line =~ / \[error\]: Too many number of keys/
+      line =~ /Too many number of keys/
     }.size == 1, "too many keys error is not logged"
   end
 
