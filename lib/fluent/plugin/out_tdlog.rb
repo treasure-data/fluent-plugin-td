@@ -205,8 +205,8 @@ module Fluent
           # TODO (a) Remove the transaction mechanism of fluentd
           #      or (b) keep transaction boundaries in in/out_forward.
           #      This code disables the transaction mechanism (a).
-          log.error "#{e}: #{summarize_record(record)}"
-          log.error_backtrace e.backtrace
+          log.warn "Skipped a broken record (#{e}): #{summarize_record(record)}"
+          log.warn_backtrace e.backtrace
           next
         end
 
