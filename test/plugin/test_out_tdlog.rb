@@ -56,6 +56,25 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     assert_equal('TD1 testkey', @auth_header)
   end
 
+  def test_emit_with_broken_record
+    d = create_driver
+    time, records = stub_seed_values
+    records[1] = nil
+    records << 'string' # non-hash case
+    database, table = d.instance.instance_variable_get(:@key).split(".", 2)
+    stub_td_table_create_request(database, table)
+    stub_td_import_request(stub_request_body(records, time), database, table)
+
+    records.each { |record|
+      d.emit(record, time)
+    }
+    d.run
+
+    assert !d.instance.log.logs.any? { |line|
+      line =~ /undefined method/
+    }, 'nil record should be skipped'
+  end
+
   def test_emit_with_time_symbole
     d = create_driver
     time, records = stub_seed_values

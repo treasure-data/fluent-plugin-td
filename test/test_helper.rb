@@ -27,6 +27,8 @@ class Test::Unit::TestCase
   def stub_request_body(records, time = nil)
     out = ''
     records.each { |record|
+      next unless record.is_a?(Hash)
+
       r = record.dup
       if time
         r['time'] = time
