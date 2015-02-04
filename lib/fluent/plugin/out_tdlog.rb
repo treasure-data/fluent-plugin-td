@@ -183,8 +183,8 @@ module Fluent
     end
 
     def format_stream(tag, es)
-      out = ''
-      off = out.bytesize
+      out = $use_msgpack_5 ? MessagePack::Buffer.new : ''.force_encoding('ASCII-8BIT') # this condition will be removed after removed msgpack v0.4 support
+      off = out.size  # size is same as bytesize in ASCII-8BIT string
       es.each { |time, record|
         # Applications may send non-hash record or broken chunk may generate non-hash record so such records should be skipped
         next unless record.is_a?(Hash)
@@ -219,7 +219,7 @@ module Fluent
           TreasureData::API.normalized_msgpack(record, out)
         end
 
-        noff = out.bytesize
+        noff = out.size
         sz = noff - off
         if sz > @record_size_limit
           # TODO don't raise error
@@ -228,7 +228,7 @@ module Fluent
         end
         off = noff
       }
-      out
+      out.to_s
     end
 
     def summarize_record(record)
