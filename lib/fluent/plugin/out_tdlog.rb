@@ -186,6 +186,9 @@ module Fluent
       out = ''
       off = out.bytesize
       es.each { |time, record|
+        # Applications may send non-hash record or broken chunk may generate non-hash record so such records should be skipped
+        next unless record.is_a?(Hash)
+
         begin
           if @anonymizes
             @anonymizes.each_pair { |key, scr|
