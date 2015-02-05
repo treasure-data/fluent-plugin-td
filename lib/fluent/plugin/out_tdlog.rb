@@ -216,6 +216,8 @@ module Fluent
         begin
           record.to_msgpack(out)
         rescue RangeError
+          # In msgpack v0.5, 'out' becomes String, not Buffer. This is not a problem because Buffer has a compatibility with String
+          out = out.to_s[0, off]
           TreasureData::API.normalized_msgpack(record, out)
         end
 

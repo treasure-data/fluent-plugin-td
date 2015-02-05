@@ -1,5 +1,6 @@
 require 'fluent/test'
 require 'fluent/plugin/out_tdlog'
+require 'test_helper.rb'
 
 class TreasureDataLogOutputTest < Test::Unit::TestCase
   # BufferedOutputTestDriver uses module_eval, not inheritance.
@@ -73,6 +74,25 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     assert !d.instance.log.logs.any? { |line|
       line =~ /undefined method/
     }, 'nil record should be skipped'
+  end
+
+  def test_emit_with_bigint_record
+    n = 100000000000000000000000
+    d = create_driver
+    time, records = stub_seed_values
+    records[1]['k'] = ['hogehoge' * 1000]
+    records[1]['kk'] = n.to_s # bigint is converted to string
+    database, table = d.instance.instance_variable_get(:@key).split(".", 2)
+    stub_td_table_create_request(database, table)
+    stub_td_import_request(stub_request_body(records, time), database, table)
+
+    test_time, test_records = stub_seed_values
+    test_records[1]['k'] = ['hogehoge' * 1000]
+    test_records[1]['kk'] = n
+    test_records.each { |record|
+      d.emit(record, test_time)
+    }
+    d.run
   end
 
   def test_emit_with_time_symbole
