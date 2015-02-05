@@ -1,3 +1,9 @@
+Release 0.10.25 - 2015/02/06
+
+  * Improve tempfile handling
+  * Fix Bigint handling to prevent broken msgpack stream
+
+
 Release 0.10.24 - 2015/02/05
 
   * Change log level and message when a broken record is skipped to make it clear that it is skipped
