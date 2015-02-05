@@ -245,7 +245,7 @@ module Fluent
       database, table = chunk.key.split('.', 2)
 
       FileUtils.mkdir_p(@tmpdir) unless @tmpdir.nil?
-      f = Tempfile.new("tdlog-", @tmpdir)
+      f = Tempfile.new("tdlog-#{chunk.key}-", @tmpdir)
       w = Zlib::GzipWriter.new(f)
 
       chunk.write_to(w)
@@ -258,7 +258,7 @@ module Fluent
 
     ensure
       w.close if w
-      f.close if f
+      f.close(true) if f
     end
 
     def upload(database, table, io, size, unique_id)
