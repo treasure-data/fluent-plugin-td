@@ -67,10 +67,10 @@ class Test::Unit::TestCase
     endpoint = opts[:endpoint] ? opts[:endpoint] : TreasureData::API::NEW_DEFAULT_IMPORT_ENDPOINT
 
     # for check_table_existence
-    url_with_empty = "#{schema}://#{endpoint}//v3/table/import/#{e(db)}/#{e(table)}/#{format}"
+    url_with_empty = "#{schema}://#{endpoint}/v3/table/import/#{e(db)}/#{e(table)}/#{format}"
     stub_request(:put, url_with_empty).to_return(:status => 200, :body => response)
 
-    url_with_unique = Regexp.compile("#{schema}://#{endpoint}//v3/table/import_with_id/#{e(db)}/#{e(table)}/.*/#{format}")
+    url_with_unique = Regexp.compile("#{schema}://#{endpoint}/v3/table/import_with_id/#{e(db)}/#{e(table)}/.*/#{format}")
     stub_request(:put, url_with_unique).with(:headers => {'Content-Type' => 'application/octet-stream'}) { |req|
       @auth_header = req.headers["Authorization"]
       stub_gzip_unwrap(req.body) == stub_gzip_unwrap(body)
