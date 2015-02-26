@@ -14,6 +14,7 @@ module Fluent
 
     config_param :apikey, :string
     config_param :auto_create_table, :bool, :default => true
+    config_param :use_gzip_command, :bool, :default => false
 
     config_param :endpoint, :string, :default => TreasureData::API::NEW_DEFAULT_ENDPOINT
     config_param :use_ssl, :bool, :default => true
@@ -45,6 +46,16 @@ module Fluent
 
     def configure(conf)
       super
+
+      if @use_gzip_command
+        require 'open3'
+
+        begin
+          Open3.capture3("gzip -V")
+        rescue Errno::ENOENT
+          raise ConfigError, "'gzip' utility must be in PATH for use_gzip_command parameter"
+        end
+      end
 
       # overwrite default value of buffer_chunk_limit
       if !conf['buffer_chunk_limit']
@@ -160,19 +171,54 @@ module Fluent
 
       FileUtils.mkdir_p(@tmpdir) unless @tmpdir.nil?
       f = Tempfile.new("tdlog-#{chunk.key}-", @tmpdir)
-      w = Zlib::GzipWriter.new(f)
 
+      size = if @use_gzip_command
+               gzip_by_command(chunk, f)
+             else
+               gzip_by_writer(chunk, f)
+             end
+      f.pos = 0
+      upload(database, table, f, size, unique_id)
+    ensure
+      f.close(true) if f
+    end
+
+    # TODO: Share this routine with s3 compressors
+    def gzip_by_command(chunk, tmp)
+      chunk_is_file = @buffer_type == 'file'
+      path = if chunk_is_file
+               chunk.path
+             else
+               w = Tempfile.new("gzip-tdlog-#{chunk.key}-", @tmpdir)
+               chunk.write_to(w)
+               w.close
+               w.path
+             end
+      res = system "gzip -c #{path} > #{tmp.path}"
+      unless res
+        log.warn "failed to execute gzip command. Fallback to GzipWriter. status = #{$?}"
+        begin
+          tmp.truncate(0)
+          return gzip_by_writer(chunk, tmp)
+        end
+      end
+      File.size(tmp.path)
+    ensure
+      unless chunk_is_file
+        w.close(true) rescue nil
+      end
+    end
+
+    def gzip_by_writer(chunk, tmp)
+      w = Zlib::GzipWriter.new(tmp)
       chunk.write_to(w)
       w.finish
       w = nil
-
-      size = f.pos
-      f.pos = 0
-      upload(database, table, f, size, unique_id)
-
+      tmp.pos
     ensure
-      w.close if w
-      f.close(true) if f
+      if w
+        w.close rescue nil
+      end
     end
 
     def upload(database, table, io, size, unique_id)
