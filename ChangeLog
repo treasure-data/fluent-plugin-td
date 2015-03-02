@@ -1,3 +1,9 @@
+Release 0.10.26 - 2015/03/03
+
+  * Add use_gzip_command option to reduce CPU usage
+  * Remove useless anonymizer feature
+
+
 Release 0.10.25 - 2015/02/06
 
   * Improve tempfile handling
