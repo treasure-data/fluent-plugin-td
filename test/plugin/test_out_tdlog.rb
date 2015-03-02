@@ -37,7 +37,7 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     d = create_driver
 
     {:@apikey => 'testkey', :@use_ssl => true, :@auto_create_table => true,
-     :@buffer_type => 'file', :@flush_interval => 300}.each { |k, v|
+     :@buffer_type => 'file', :@flush_interval => 300, :@use_gzip_command => false}.each { |k, v|
       assert_equal(d.instance.instance_variable_get(k), v)
     }
   end
@@ -48,11 +48,35 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     database, table = d.instance.instance_variable_get(:@key).split(".", 2)
     stub_td_table_create_request(database, table)
     stub_td_import_request(stub_request_body(records, time), database, table)
+    assert_rr {
+      # mock(d.instance).gzip_by_writer(is_a(Fluent::BufferChunk), is_a(Tempfile)) causes empty request body so using dont_allow instead to check calling method
+      # We need actual gzipped content to verify compressed body is correct or not.
+      dont_allow(d.instance).gzip_by_command(is_a(Fluent::BufferChunk), is_a(Tempfile))
 
-    records.each { |record|
-      d.emit(record, time)
+      records.each { |record|
+        d.emit(record, time)
+      }
+      d.run
     }
-    d.run
+
+    assert_equal('TD1 testkey', @auth_header)
+  end
+
+  def test_emit_with_gzip_command
+    d = create_driver(DEFAULT_CONFIG + "use_gzip_command true")
+    time, records = stub_seed_values
+    database, table = d.instance.instance_variable_get(:@key).split(".", 2)
+    stub_td_table_create_request(database, table)
+    stub_td_import_request(stub_request_body(records, time), database, table)
+    assert_rr {
+      # same as test_emit
+      dont_allow(d.instance).gzip_by_writer(is_a(Fluent::BufferChunk), is_a(Tempfile))
+
+      records.each { |record|
+        d.emit(record, time)
+      }
+      d.run
+    }
 
     assert_equal('TD1 testkey', @auth_header)
   end
