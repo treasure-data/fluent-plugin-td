@@ -5,6 +5,7 @@ require 'webmock/test_unit'
 require 'stringio'
 require 'td-client'
 require 'zlib'
+require 'test/unit/rr'
 
 def e(s)
   require 'cgi'

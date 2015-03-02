@@ -21,4 +21,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "td-client", "~> 0.8.66"
   gem.add_development_dependency "rake", ">= 0.9.2"
   gem.add_development_dependency "webmock", "~> 1.16"
+  gem.add_development_dependency "test-unit", "~> 3.0.8"
+  gem.add_development_dependency "test-unit-rr", "~> 1.0.3"
 end
