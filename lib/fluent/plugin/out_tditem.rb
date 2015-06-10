@@ -15,7 +15,7 @@ module Fluent
       define_method(:log) { $log }
     end
 
-    config_param :apikey, :string
+    config_param :apikey, :string, :secret => true
     config_param :database, :string
     config_param :table, :string
     config_param :tmpdir, :string, :default => nil
