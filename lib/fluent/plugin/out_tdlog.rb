@@ -12,7 +12,7 @@ module Fluent
       define_method(:log) { $log }
     end
 
-    config_param :apikey, :string
+    config_param :apikey, :string, :secret => true
     config_param :auto_create_table, :bool, :default => true
     config_param :use_gzip_command, :bool, :default => false
 
