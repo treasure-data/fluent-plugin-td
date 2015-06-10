@@ -1,3 +1,8 @@
+Release 0.10.27 - 2015/06/10
+
+  * Add secret option to apikey parameter
+
+
 Release 0.10.26 - 2015/03/03
 
   * Add use_gzip_command option to reduce CPU usage
