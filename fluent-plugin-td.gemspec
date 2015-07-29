@@ -16,6 +16,7 @@ Gem::Specification.new do |gem|
   gem.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ['lib']
+  gem.license       = "Apache-2.0"
 
   gem.add_dependency "fluentd", [">= 0.10.27", "< 2"]
   gem.add_dependency "td-client", "~> 0.8.66"
