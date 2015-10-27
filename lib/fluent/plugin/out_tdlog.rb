@@ -171,6 +171,7 @@ module Fluent
 
       FileUtils.mkdir_p(@tmpdir) unless @tmpdir.nil?
       f = Tempfile.new("tdlog-#{chunk.key}-", @tmpdir)
+      f.binmode
 
       size = if @use_gzip_command
                gzip_by_command(chunk, f)
@@ -190,6 +191,7 @@ module Fluent
                chunk.path
              else
                w = Tempfile.new("gzip-tdlog-#{chunk.key}-", @tmpdir)
+               w.binmode
                chunk.write_to(w)
                w.close
                w.path
