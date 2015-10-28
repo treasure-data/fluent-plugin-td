@@ -1,3 +1,9 @@
+Release 0.10.28 - 2015/10/28
+
+  * Remove tditem output plugin
+  * Fix temporary file handling on windows
+
+
 Release 0.10.27 - 2015/06/10
 
   * Add secret option to apikey parameter
