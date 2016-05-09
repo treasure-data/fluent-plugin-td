@@ -1,10 +1,18 @@
 rvm:
  - 1.9.3
- - 2.0.0
- - 2.1.0
+ - 2.0
+ - 2.1
+ - 2.2.4
+ - 2.3.1
+ - ruby-head
 
 gemfile:
  - Gemfile
- - Gemfile.msgpack.0.4
 
+before_install: gem update bundler
 script: bundle exec rake test
+
+matrix:
+  allow_failures:
+    - rvm: 1.9.3
+    - rvm: ruby-head
