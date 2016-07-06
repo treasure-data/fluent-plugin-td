@@ -1,4 +1,5 @@
 require 'td-client'
+require 'fluent/output'
 require 'fluent/plugin/td_plugin_version'
 
 module Fluent
