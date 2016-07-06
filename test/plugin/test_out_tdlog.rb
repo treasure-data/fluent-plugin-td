@@ -3,11 +3,6 @@ require 'fluent/plugin/out_tdlog'
 require 'test_helper.rb'
 
 class TreasureDataLogOutputTest < Test::Unit::TestCase
-  # BufferedOutputTestDriver uses module_eval, not inheritance.
-  # This DummyOutput is for testing actual write method with webmock
-  class TreasureDataLogDummyOutput < Fluent::TreasureDataLogOutput
-  end
-
   def setup
     Fluent::Test.setup
   end
@@ -25,9 +20,12 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
       buffer_path #{TMP_DIR}/buffer
     ] + conf
 
-    Fluent::Test::BufferedOutputTestDriver.new(TreasureDataLogDummyOutput) do
+    Fluent::Test::BufferedOutputTestDriver.new(Fluent::TreasureDataLogOutput) do
       def write(chunk)
         chunk.instance_variable_set(:@key, @key)
+        def chunk.key
+          @key
+        end
         super(chunk)
       end
     end.configure(config)
@@ -51,7 +49,7 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     assert_rr {
       # mock(d.instance).gzip_by_writer(is_a(Fluent::BufferChunk), is_a(Tempfile)) causes empty request body so using dont_allow instead to check calling method
       # We need actual gzipped content to verify compressed body is correct or not.
-      dont_allow(d.instance).gzip_by_command(is_a(Fluent::BufferChunk), is_a(Tempfile))
+      dont_allow(d.instance).gzip_by_command(anything, is_a(Tempfile))
 
       records.each { |record|
         d.emit(record, time)
@@ -70,7 +68,7 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     stub_td_import_request(stub_request_body(records, time), database, table)
     assert_rr {
       # same as test_emit
-      dont_allow(d.instance).gzip_by_writer(is_a(Fluent::BufferChunk), is_a(Tempfile))
+      dont_allow(d.instance).gzip_by_writer(anything, is_a(Tempfile))
 
       records.each { |record|
         d.emit(record, time)
