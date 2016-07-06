@@ -45,6 +45,11 @@ module Fluent
     end
 
     def configure(conf)
+      # overwrite default value of buffer_chunk_limit
+      unless conf.has_key?('buffer_chunk_limit')
+        conf['buffer_chunk_limit'] = IMPORT_SIZE_LIMIT
+      end
+
       super
 
       if @use_gzip_command
@@ -55,11 +60,6 @@ module Fluent
         rescue Errno::ENOENT
           raise ConfigError, "'gzip' utility must be in PATH for use_gzip_command parameter"
         end
-      end
-
-      # overwrite default value of buffer_chunk_limit
-      if !conf['buffer_chunk_limit']
-        @buffer.buffer_chunk_limit = IMPORT_SIZE_LIMIT
       end
 
       if conf.has_key?('tmpdir')
