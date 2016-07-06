@@ -22,7 +22,6 @@ module Fluent
     config_param :connect_timeout, :integer, :default => nil
     config_param :read_timeout, :integer, :default => nil
     config_param :send_timeout, :integer, :default => nil
-    config_set_default :buffer_type, 'file'
     config_set_default :flush_interval, 300
 
     def initialize
@@ -49,6 +48,11 @@ module Fluent
       # overwrite default value of buffer_chunk_limit
       unless conf.has_key?('buffer_chunk_limit')
         conf['buffer_chunk_limit'] = IMPORT_SIZE_LIMIT
+      end
+
+      # v0.14 seems to have a bug of config_set_default: https://github.com/treasure-data/fluent-plugin-td/pull/22#issuecomment-230782005
+      unless conf.has_key?('buffer_type')
+        conf['buffer_type'] = 'file'
       end
 
       super
