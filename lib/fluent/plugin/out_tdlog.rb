@@ -126,7 +126,7 @@ module Fluent
         next unless record.is_a?(Hash)
 
         begin
-          record['time'] = time
+          record['time'] = time.to_i
           record.delete(:time) if record.has_key?(:time)
 
           if record.size > @key_num_limit
