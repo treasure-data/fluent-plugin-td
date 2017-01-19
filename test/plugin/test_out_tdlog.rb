@@ -117,6 +117,25 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     d.run
   end
 
+  def test_emit_with_event_time
+    omit "EventTime is not implemented with current Fluentd version" unless Fluent.const_defined?('EventTime')
+
+    event_time_klass = Fluent.const_get('EventTime')
+
+    event_time = event_time_klass.now
+    d = create_driver
+    _time, records = stub_seed_values
+    database, table = d.instance.instance_variable_get(:@key).split(".", 2)
+    stub_td_table_create_request(database, table)
+    stub_td_import_request(stub_request_body(records, event_time.to_i), database, table)
+
+    _test_time, test_records = stub_seed_values
+    test_records.each { |record|
+      d.emit(record, event_time)
+    }
+    d.run
+  end
+
   def test_emit_with_time_symbole
     d = create_driver
     time, records = stub_seed_values
