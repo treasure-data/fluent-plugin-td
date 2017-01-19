@@ -4,6 +4,7 @@ rvm:
  - 2.1
  - 2.2.4
  - 2.3.1
+ - 2.4.0
  - ruby-head
 
 gemfile:
@@ -17,6 +18,7 @@ sudo: false
 
 matrix:
   allow_failures:
+    - rvm: 2.4.0
     - rvm: ruby-head
   exclude:
     - rvm: 1.9.3
