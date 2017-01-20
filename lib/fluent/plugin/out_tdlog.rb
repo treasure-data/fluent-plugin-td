@@ -119,7 +119,7 @@ module Fluent
     end
 
     def format_stream(tag, es)
-      out = $use_msgpack_5 ? MessagePack::Buffer.new : ''.force_encoding('ASCII-8BIT') # this condition will be removed after removed msgpack v0.4 support
+      out = MessagePack::Buffer.new
       off = out.size  # size is same as bytesize in ASCII-8BIT string
       es.each { |time, record|
         # Applications may send non-hash record or broken chunk may generate non-hash record so such records should be skipped
