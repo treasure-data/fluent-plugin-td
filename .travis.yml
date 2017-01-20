@@ -16,5 +16,4 @@ sudo: false
 
 matrix:
   allow_failures:
-    - rvm: 2.4.0
     - rvm: ruby-head
