@@ -1,5 +1,4 @@
 rvm:
- - 2.0
  - 2.1
  - 2.2.4
  - 2.3.1
@@ -17,8 +16,7 @@ sudo: false
 
 matrix:
   allow_failures:
-    - rvm: 2.4.0
     - rvm: ruby-head
   exclude:
-    - rvm: 2.0
-      gemfile: Gemfile
+    - rvm: 2.4.0
+      gemfile: Gemfile.v0.12

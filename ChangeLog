@@ -1,3 +1,10 @@
+Release 0.11.0.rc1 - 2017/01/20
+
+  * Fix event time handling for v0.14
+  * Drop ruby 1.9/2.0, fluentd v0.10 and msgpack v0.4 support
+  * Update td-client dependency to v1.0
+
+
 Release 0.10.29 - 2016/07/06
 
   * Work with fluentd v0.14
