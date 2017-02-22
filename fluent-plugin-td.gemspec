@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.description = "Treasure Data Cloud Data Service plugin for Fluentd"
   gem.homepage    = "http://www.treasuredata.com/"
   gem.summary     = gem.description
-  gem.version     = Fluent::TreasureDataPlugin::VERSION
+  gem.version     = Fluent::Plugin::TreasureDataPlugin::VERSION
   gem.authors     = ["Treasure Data, Inc."]
   gem.email       = "support@treasure-data.com"
   gem.has_rdoc    = false
