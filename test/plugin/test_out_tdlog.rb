@@ -52,9 +52,10 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     }
   end
 
-  def test_emit
+  data('evet_time' => 'event_time', 'int_time' => 'int')
+  def test_emit(time_class)
     d = create_driver
-    time, records = stub_seed_values
+    time, records = stub_seed_values(time_class)
     database, table = d.instance.instance_variable_get(:@key).split(".", 2)
     stub_td_table_create_request(database, table)
     stub_td_import_request(stub_request_body(records, time), database, table)
@@ -186,10 +187,11 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
       Fluent::Test::Driver::Output.new(Fluent::Plugin::TreasureDataLogOutput).configure(config)
     end
 
-    def test_tag_split
+    data('evet_time' => 'event_time', 'int_time' => 'int')
+    def test_tag_split(time_class)
       d = create_driver
 
-      time, records = stub_seed_values
+      time, records = stub_seed_values(time_class)
       database = 'db1'
       table = 'table1'
       stub_td_table_create_request(database, table)

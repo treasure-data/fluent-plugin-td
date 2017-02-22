@@ -23,7 +23,7 @@ class Test::Unit::TestCase
     record
   end
 
-  def stub_seed_values(time_class: 'int')
+  def stub_seed_values(time_class = 'int')
     time = event_time("2014-01-01 00:00:00 UTC")
     time = time.to_i if time_class == 'int'
     records = [{"a" => 1}, {"a" => 2}]
