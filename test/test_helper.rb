@@ -1,11 +1,13 @@
 require 'json'
 require 'msgpack'
-require 'fluent/test'
 require 'webmock/test_unit'
 require 'stringio'
 require 'td-client'
 require 'zlib'
 require 'test/unit/rr'
+
+require 'fluent/test'
+require 'fluent/test/helpers'
 
 def e(s)
   require 'cgi'
@@ -13,14 +15,17 @@ def e(s)
 end
 
 class Test::Unit::TestCase
+  include Fluent::Test::Helpers
+
   def create_too_many_keys_record
     record = {}
     5012.times { |i| record["k#{i}"] = i }
     record
   end
 
-  def stub_seed_values
-    time = Time.parse("2014-01-01 00:00:00 UTC").to_i
+  def stub_seed_values(time_class: 'int')
+    time = event_time("2014-01-01 00:00:00 UTC")
+    time = time.to_i if time_class == 'int'
     records = [{"a" => 1}, {"a" => 2}]
     return time, records
   end
@@ -32,7 +37,7 @@ class Test::Unit::TestCase
 
       r = record.dup
       if time
-        r['time'] = time
+        r['time'] = time.to_i
       end
       r.to_msgpack(out)
     }
