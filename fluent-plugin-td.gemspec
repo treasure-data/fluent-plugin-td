@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.description = "Treasure Data Cloud Data Service plugin for Fluentd"
   gem.homepage    = "http://www.treasuredata.com/"
   gem.summary     = gem.description
-  gem.version     = Fluent::TreasureDataPlugin::VERSION
+  gem.version     = Fluent::Plugin::TreasureDataPlugin::VERSION
   gem.authors     = ["Treasure Data, Inc."]
   gem.email       = "support@treasure-data.com"
   gem.has_rdoc    = false
@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.license       = "Apache-2.0"
 
-  gem.add_dependency "fluentd", [">= 0.12.0", "< 2"]
+  gem.add_dependency "fluentd", [">= 0.14.13", "< 2"]
   gem.add_dependency "td-client", "~> 1.0"
   gem.add_development_dependency "rake", ">= 0.9.2"
   gem.add_development_dependency "webmock", "~> 1.16"
