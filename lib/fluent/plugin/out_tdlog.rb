@@ -111,9 +111,6 @@ module Fluent::Plugin
           return nil
         end
       rescue => e
-        # TODO (a) Remove the transaction mechanism of fluentd
-        #      or (b) keep transaction boundaries in in/out_forward.
-        #      This code disables the transaction mechanism (a).
         router.emit_error_event(tag, time, {'record' => record}, RuntimeError.new("skipped a broken record: #{e}"))
         return nil
       end
