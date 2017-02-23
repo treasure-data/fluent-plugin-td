@@ -52,6 +52,18 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
     }
   end
 
+  def test_configure_for_chunk_key_tag
+    assert_raise Fluent::ConfigError.new("'tag' must be included in <buffer ARG> when database and table are not specified") do
+      Fluent::Test::Driver::Output.new(Fluent::Plugin::TreasureDataLogOutput).configure(%[
+        apikey testkey
+        <buffer []>
+          flush_interval 10s
+          path #{TMP_DIR}/buffer
+        </buffer>
+      ])
+    end
+  end
+
   data('evet_time' => 'event_time', 'int_time' => 'int')
   def test_emit(time_class)
     d = create_driver

@@ -67,6 +67,10 @@ module Fluent::Plugin
       if @database && @table
         validate_database_and_table_name(@database, @table)
         @key = "#{@database}.#{@table}"
+      else
+        unless @chunk_key_tag
+          raise Fluent::ConfigError, "'tag' must be included in <buffer ARG> when database and table are not specified"
+        end
       end
     end
 
