@@ -1,4 +1,4 @@
-Release 1.0.0.rc1 - 2017/02/23
+Release 1.0.0 - 2017/11/26
 
   * Use new Plugin API
   * Update fluentd dependency to v0.14.13 or later
