@@ -5,7 +5,7 @@ Treasure Data's REST APIs.
 
 This plugin relies on the Treasure Data's {Ruby client library}[https://github.com/treasure-data/td-client-ruby] to communicate with the Treasure Data's REST APIs.
 
-For more information, please visit the official {Fluentd TD Output plugin}[http://docs.fluentd.org/articles/http-to-td] page at http://docs.fluentd.org.
+For more information, please visit the official {Fluentd TD Output plugin}[https://docs.fluentd.org/how-to-guides/http-to-td] page at https://docs.fluentd.org.
 
 == Configuration
 
@@ -37,7 +37,7 @@ The configuration options currently supported are:
   *NOTE* 
   
   depending on the access control permissions associated to the API key, a database can or cannot be created if not already available.
-  See the {Treasure Data Access Control documentation}[http://docs.treasuredata.com/articles/access-control] page for details.
+  See the {Treasure Data Access Control documentation}[https://docs.treasuredata.com/articles/access-control] page for details.
   
 +database+::
   Specifies the destination database in the Treasure Data cloud.
