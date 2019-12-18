@@ -22,7 +22,7 @@ module Fluent::Plugin
     config_param :table, :string, :default => nil
     config_param :use_gzip_command, :bool, :default => false
 
-    config_param :endpoint, :string, :default => TreasureData::API::NEW_DEFAULT_ENDPOINT
+    config_param :endpoint, :string, :default => TreasureData::API::DEFAULT_IMPORT_ENDPOINT
     config_param :use_ssl, :bool, :default => true
     config_param :tmpdir, :string, :default => nil
     config_param :http_proxy, :string, :default => nil
