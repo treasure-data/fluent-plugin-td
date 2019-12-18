@@ -177,12 +177,11 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
   end
 
   def test_emit_with_too_many_keys
-    d = create_driver(DEFAULT_CONFIG + "endpoint foo.bar.baz")
-    opts = {:endpoint => 'foo.bar.baz'}
-    time, records = stub_seed_values
+    d = create_driver(DEFAULT_CONFIG)
+    time, _ = stub_seed_values
     database, table = d.instance.instance_variable_get(:@key).split(".", 2)
-    stub_td_table_create_request(database, table, opts)
-    stub_td_import_request(stub_request_body([], time), database, table, opts)
+    stub_td_table_create_request(database, table)
+    stub_td_import_request(stub_request_body([], time), database, table)
 
     d.run(default_tag: 'test') {
       d.feed(time, create_too_many_keys_record)
