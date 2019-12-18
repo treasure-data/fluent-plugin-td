@@ -1,3 +1,9 @@
+Release 1.1.0 - 2019/12/18
+
+  * Add api_endpoint and import_endpoint to use proper endpoint for each request.
+    endpoint is now alias of import_endpoint
+
+
 Release 1.0.0 - 2017/11/26
 
   * Use new Plugin API
