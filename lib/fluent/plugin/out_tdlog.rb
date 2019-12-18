@@ -22,7 +22,8 @@ module Fluent::Plugin
     config_param :table, :string, :default => nil
     config_param :use_gzip_command, :bool, :default => false
 
-    config_param :endpoint, :string, :default => TreasureData::API::NEW_DEFAULT_ENDPOINT
+    config_param :import_endpoint, :string, :alias => :endpoint, :default => TreasureData::API::DEFAULT_IMPORT_ENDPOINT
+    config_param :api_endpoint, :string, :default => TreasureData::API::DEFAULT_ENDPOINT
     config_param :use_ssl, :bool, :default => true
     config_param :tmpdir, :string, :default => nil
     config_param :http_proxy, :string, :default => nil
@@ -78,11 +79,11 @@ module Fluent::Plugin
       super
 
       client_opts = {
-        :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent, :endpoint => @endpoint,
+        :ssl => @use_ssl, :http_proxy => @http_proxy, :user_agent => @user_agent,
         :connect_timeout => @connect_timeout, :read_timeout => @read_timeout, :send_timeout => @send_timeout
       }
-      @client = TreasureData::Client.new(@apikey, client_opts)
-
+      @client = TreasureData::Client.new(@apikey, client_opts.merge({:endpoint => @import_endpoint}))
+      @api_client = TreasureData::Client.new(@apikey, client_opts.merge({:endpoint => @api_endpoint}))
       if @key
         if @auto_create_table
           ensure_database_and_table(@database, @table)
@@ -263,10 +264,10 @@ module Fluent::Plugin
     def ensure_database_and_table(database, table)
       log.info "Creating table #{database}.#{table} on TreasureData"
       begin
-        @client.create_log_table(database, table)
+        @api_client.create_log_table(database, table)
       rescue TreasureData::NotFoundError
-        @client.create_database(database)
-        @client.create_log_table(database, table)
+        @api_client.create_database(database)
+        @api_client.create_log_table(database, table)
       rescue TreasureData::AlreadyExistsError
       end
     end

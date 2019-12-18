@@ -54,12 +54,19 @@ The configuration options currently supported are:
   This parameter is *required* unless the +auto_create_table+ option is used.
   
 +endpoint+::
-  Specifies the Treasure Data's REST API endpoint.
+  Specifies the Treasure Data's REST API endpoint for import requests.
   
   Requires the endpoint as argument.
   
-  If not specified, a default is used; please refer to the {td-client-ruby's :endpoint}[https://github.com/treasure-data/td-client-ruby#endpoint] option for more details.
+  If not specified, a default for import requests is used; please refer to the {td-client-ruby's :endpoint}[https://github.com/treasure-data/td-client-ruby#endpoint] option for more details.
   
++api_endpoint+::
+  Specifies the Treasure Data's REST API endpoint.
+
+  Requires the endpoint as argument.
+
+  If not specified, a default is used; please refer to the {td-client-ruby's :endpoint}[https://github.com/treasure-data/td-client-ruby#endpoint] option for more details.
+
 +use_ssl+::
   Specifies whether to communicate using SSL encryption over HTTPS.
   

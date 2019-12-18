@@ -10,7 +10,6 @@ Gem::Specification.new do |gem|
   gem.version     = Fluent::Plugin::TreasureDataPlugin::VERSION
   gem.authors     = ["Treasure Data, Inc."]
   gem.email       = "support@treasure-data.com"
-  gem.has_rdoc    = false
   #gem.platform    = Gem::Platform::RUBY
   gem.files       = `git ls-files`.split("\n")
   gem.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
