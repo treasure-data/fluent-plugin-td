@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   gem.license       = "Apache-2.0"
 
   gem.add_dependency "fluentd", [">= 0.14.13", "< 2"]
+  gem.add_dependency "td-client"
   gem.add_development_dependency "rake", ">= 0.9.2"
   gem.add_development_dependency "webmock", "~> 1.16"
   gem.add_development_dependency "test-unit", "~> 3.0.8"

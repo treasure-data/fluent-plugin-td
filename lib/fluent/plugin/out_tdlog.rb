@@ -223,8 +223,6 @@ module Fluent::Plugin
           ensure_database_and_table(database, table)
           io.pos = 0
           retry
-        rescue TreasureData::ClientError
-          raise
         end
       rescue TreasureData::TooManyRequestsError
         raise
