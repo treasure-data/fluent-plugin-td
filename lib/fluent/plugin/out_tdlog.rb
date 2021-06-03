@@ -4,6 +4,7 @@ require 'zlib'
 require 'stringio'
 require 'td-client'
 
+require 'fluent/error'
 require 'fluent/plugin/output'
 require 'fluent/plugin/td_plugin_version'
 
@@ -215,14 +216,18 @@ module Fluent::Plugin
         begin
           start = Time.now
           @client.import(database, table, UPLOAD_EXT, io, size, unique_str)
-        rescue TreasureData::NotFoundError => e
+        rescue TreasureData::NotFoundError
           unless @auto_create_table
-            raise e
+            raise
           end
           ensure_database_and_table(database, table)
           io.pos = 0
           retry
         end
+      rescue TreasureData::TooManyRequestsError
+        raise
+      rescue TreasureData::ClientError => e
+        raise Fluent::UnrecoverableError.new(e.message)
       rescue => e
         elapsed = Time.now - start
         ne = RuntimeError.new("Failed to upload to Treasure Data '#{database}.#{table}' table: #{e.inspect} (#{size} bytes; #{elapsed} seconds)")

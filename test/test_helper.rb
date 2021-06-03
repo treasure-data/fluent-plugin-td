@@ -69,6 +69,7 @@ class Test::Unit::TestCase
     opts[:use_ssl] = true unless opts.has_key?(:use_ssl)
     format = opts[:format] || 'msgpack.gz'
     schema = opts[:use_ssl] ? 'https' : 'http'
+    status = opts[:status] || 200
     response = {"database" => db, "table" => table, "elapsed_time" => 0}.to_json
     endpoint = opts[:endpoint] ? opts[:endpoint] : TreasureData::API::DEFAULT_IMPORT_ENDPOINT
 
@@ -80,6 +81,6 @@ class Test::Unit::TestCase
     stub_request(:put, url_with_unique).with(:headers => {'Content-Type' => 'application/octet-stream'}) { |req|
       @auth_header = req.headers["Authorization"]
       stub_gzip_unwrap(req.body) == stub_gzip_unwrap(body)
-    }.to_return(:status => 200, :body => response)
+    }.to_return(:status => status, :body => response)
   end
 end
