@@ -13,6 +13,7 @@ module Fluent::Plugin
     Fluent::Plugin.register_output('tdlog', self)
 
     IMPORT_SIZE_LIMIT = 32 * 1024 * 1024
+    IMPORT_RECORDS_LIMIT = 8096
     UPLOAD_EXT = 'msgpack.gz'.freeze
 
     helpers :event_emitter, :compat_parameters
@@ -37,13 +38,14 @@ module Fluent::Plugin
       config_set_default :chunk_keys, ['tag']
       config_set_default :flush_interval, 300
       config_set_default :chunk_limit_size, IMPORT_SIZE_LIMIT
+      config_set_default :chunk_limit_records, IMPORT_RECORDS_LIMIT
     end
 
     def initialize
       super
       @key = nil
-      @key_num_limit = 512  # TODO: Our one-time import has the restriction about the number of record keys.
-      @record_size_limit = 32 * 1024 * 1024  # TODO
+      @key_num_limit = 512
+      @record_size_limit = 32 * 1024 * 1024
       @table_list = {}
       @empty_gz_data = TreasureData::API.create_empty_gz_data
       @user_agent = "fluent-plugin-td: #{TreasureDataPlugin::VERSION}".freeze
@@ -108,7 +110,6 @@ module Fluent::Plugin
         record.delete(:time) if record.has_key?(:time)
 
         if record.size > @key_num_limit
-          # TODO include summary of the record
           router.emit_error_event(tag, time, record, RuntimeError.new("too many number of keys (#{record.size} keys)"))
           return nil
         end
@@ -169,7 +170,6 @@ module Fluent::Plugin
       f.close(true) if f
     end
 
-    # TODO: Share this routine with s3 compressors
     def gzip_by_command(chunk, tmp)
       chunk_is_file = @buffer_config['@type'] == 'file'
       path = if chunk_is_file
@@ -184,10 +184,8 @@ module Fluent::Plugin
       res = system "gzip -c #{path} > #{tmp.path}"
       unless res
         log.warn "failed to execute gzip command. Fallback to GzipWriter. status = #{$?}"
-        begin
-          tmp.truncate(0)
-          return gzip_by_writer(chunk, tmp)
-        end
+        tmp.truncate(0)
+        return gzip_by_writer(chunk, tmp)
       end
       File.size(tmp.path)
     ensure
@@ -212,9 +210,9 @@ module Fluent::Plugin
       unique_str = unique_id.unpack('C*').map { |x| "%02x" % x }.join
       log.trace { "uploading logs to Treasure Data database=#{database} table=#{table} (#{size}bytes)" }
 
+      start = Time.now
       begin
         begin
-          start = Time.now
           @client.import(database, table, UPLOAD_EXT, io, size, unique_str)
         rescue TreasureData::NotFoundError
           unless @auto_create_table
@@ -274,6 +272,7 @@ module Fluent::Plugin
         @api_client.create_database(database)
         @api_client.create_log_table(database, table)
       rescue TreasureData::AlreadyExistsError
+        # ignored
       end
     end
   end

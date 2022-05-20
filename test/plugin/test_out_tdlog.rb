@@ -1,7 +1,7 @@
 require 'fluent/test'
 require 'fluent/test/driver/output'
 require 'fluent/plugin/out_tdlog'
-require 'test_helper.rb'
+require 'test_helper'
 
 class TreasureDataLogOutputTest < Test::Unit::TestCase
   TMP_DIR = File.dirname(__FILE__) + "/tmp"
