@@ -14,6 +14,21 @@ jobs:
       - run:
           name: Run tests
           command: bundle exec rake test
+  publish:
+    docker:
+      - image: cimg/ruby:2.4
+    steps:
+      - checkout
+      - ruby/install-deps
+      - run:
+          name: Publish gem
+          command: |
+            mkdir -p $HOME/.gem
+            touch $HOME/.gem/credentials
+            chmod 0600 $HOME/.gem/credentials
+            printf -- "---\n:rubygems_api_key: ${RUBYGEMS_AUTH_TOKEN}\n" > $HOME/.gem/credentials
+            gem build *.gemspec
+            gem push *.gem
 workflows:
   version: 2
   test:
@@ -22,3 +37,15 @@ workflows:
           matrix:
             parameters:
               ruby-version: [ "2.4", "2.5", "2.6", "2.7", "3.0", "3.1" ]
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+      - publish:
+          context: rubygems
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
