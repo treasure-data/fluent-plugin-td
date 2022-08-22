@@ -8,8 +8,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.8.0)
-      public_suffix (>= 2.0.2, < 5.0)
+    addressable (2.8.1)
+      public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
     concurrent-ruby (1.1.10)
     cool.io (1.7.1)
@@ -72,7 +72,7 @@ GEM
     tzinfo-data (1.2022.1)
       tzinfo (>= 1.0.0)
     unicode-display_width (2.1.0)
-    webmock (3.17.0)
+    webmock (3.18.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -89,7 +89,7 @@ DEPENDENCIES
   rubocop-rake
   test-unit (~> 3.5.3)
   test-unit-rr (~> 1.0.5)
-  webmock (~> 3.17.0)
+  webmock (~> 3.18.1)
 
 BUNDLED WITH
    2.1.4
