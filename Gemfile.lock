@@ -62,7 +62,7 @@ GEM
     td-client (1.0.8)
       httpclient (>= 2.7)
       msgpack (>= 0.5.6, < 2)
-    test-unit (3.5.3)
+    test-unit (3.5.5)
       power_assert
     test-unit-rr (1.0.5)
       rr (>= 1.1.1)
