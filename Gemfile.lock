@@ -15,7 +15,7 @@ GEM
     cool.io (1.7.1)
     crack (0.4.5)
       rexml
-    fluentd (1.15.2)
+    fluentd (1.15.3)
       bundler
       cool.io (>= 1.4.5, < 2.0.0)
       http_parser.rb (>= 0.5.1, < 0.9.0)
@@ -30,7 +30,7 @@ GEM
     hashdiff (1.0.1)
     http_parser.rb (0.8.0)
     httpclient (2.8.3)
-    msgpack (1.5.4)
+    msgpack (1.6.0)
     parallel (1.20.1)
     parser (3.1.2.0)
       ast (~> 2.4.1)
@@ -69,7 +69,7 @@ GEM
       test-unit (>= 2.5.2)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
-    tzinfo-data (1.2022.3)
+    tzinfo-data (1.2022.6)
       tzinfo (>= 1.0.0)
     unicode-display_width (2.1.0)
     webmock (3.18.1)
