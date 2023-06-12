@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake', '>= 0.9.2'
   gem.add_development_dependency 'rubocop'
   gem.add_development_dependency 'rubocop-rake'
-  gem.add_development_dependency 'test-unit', '~> 3.5.3'
+  gem.add_development_dependency 'test-unit', '~> 3.6.0'
   gem.add_development_dependency 'test-unit-rr', '~> 1.0.5'
   gem.add_development_dependency 'webmock', '~> 3.18.1'
 end
