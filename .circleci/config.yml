@@ -33,8 +33,7 @@ jobs:
       - image: cimg/ruby:<< parameters.ruby-version >>
     steps:
       - checkout
-      - ruby/install-deps:
-          bundler-version: '2.3.26'
+      - bundle-install
       - run:
           name: Run tests
           command: bundle exec rake test
