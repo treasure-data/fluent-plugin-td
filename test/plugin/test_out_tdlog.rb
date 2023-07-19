@@ -87,6 +87,7 @@ class TreasureDataLogOutputTest < Test::Unit::TestCase
   end
 
   def test_emit_with_gzip_command
+    omit "On Windows, `use_gzip_command` is not available." if Fluent.windows?
     d = create_driver(DEFAULT_CONFIG + "use_gzip_command true")
     time, records = stub_seed_values
     database, table = d.instance.instance_variable_get(:@key).split(".", 2)
