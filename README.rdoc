@@ -93,6 +93,8 @@ The configuration options currently supported are:
 
 +use_gzip_command+::
   Use external gzip command instead of Ruby's Gzip library. It uses another CPU core so it may improve compression and IO performance.
+  
+  On Windows, this option is not available and Ruby's Gzip library is used even if you set this option to `true`.
 
 
 == Copyright
