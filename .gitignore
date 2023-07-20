@@ -1,2 +1,5 @@
 pkg/*
 .idea
+.bundle/
+vendor/
+Gemfile.lock

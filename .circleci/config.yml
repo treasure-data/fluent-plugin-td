@@ -1,6 +1,29 @@
 version: 2.1
+
 orbs:
-  ruby: circleci/ruby@1.8
+  ruby: circleci/ruby@2.0.0
+  win: circleci/windows@5.0.0
+
+commands:
+  install_windows_requirements:
+    description: "Install windows requirements"
+    steps:
+      - run:
+          name: "Install MSYS2"
+          command: choco install msys2 -y
+      - run:
+          name: "Install Ruby devkit"
+          command: ridk install 2 3
+  bundle-install:
+    description: "Install dependencies"
+    steps:
+      - run:
+          name: Which bundler?
+          command: ruby -v; bundle -v
+      - run:
+          name: Bundle install
+          command: bundle install
+
 jobs:
   test:
     parameters:
@@ -10,7 +33,22 @@ jobs:
       - image: cimg/ruby:<< parameters.ruby-version >>
     steps:
       - checkout
-      - ruby/install-deps
+      - bundle-install
+      - run:
+          name: Run tests
+          command: bundle exec rake test
+  win_test:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - install_windows_requirements
+      - run:
+          name: "Install bundler"
+          shell: powershell.exe
+          command: gem install bundler
+      - checkout
+      - bundle-install
       - run:
           name: Run tests
           command: bundle exec rake test
@@ -29,6 +67,7 @@ jobs:
             printf -- "---\n:rubygems_api_key: ${RUBYGEMS_AUTH_TOKEN}\n" > $HOME/.gem/credentials
             gem build *.gemspec
             gem push *.gem
+
 workflows:
   version: 2
   test:
@@ -36,7 +75,11 @@ workflows:
       - test:
           matrix:
             parameters:
-              ruby-version: [ "2.4", "2.5", "2.6", "2.7", "3.0", "3.1" ]
+              ruby-version: [ "2.4", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2" ]
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+      - win_test:
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/
@@ -44,6 +87,7 @@ workflows:
           context: rubygems
           requires:
             - test
+            - win_test
           filters:
             branches:
               ignore: /.*/
